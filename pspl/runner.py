@@ -39,61 +39,45 @@ class PSPLRunner:
     executes it. This class is a high level interface to many pre-execution
     steps such as lexical analysis and parser setup.
 
-    For general information regarding the usage of this class, see the getting
-    started page.
+    The first parameter can either be the PSPL source code or
+    the file name to execute. If it is a file, ``file`` keyword
+    argument must be set to True.
+
+    Parameters
+    ----------
+    source: :class:`str`
+        The source file name or code.
+    file: :class:`bool`
+        Whether the passed parameter is a file name. Defaults to False.
     """
-    def __init__(self) -> None:
-        self._state: Optional[RuntimeState] = None
+    def __init__(self, source: str, /, *, file: bool = False) -> None:
+        self._state = self._get_state(source=source, file=file)
         self._lock = threading.Lock()
 
     def _get_state(self, *args: Any, **kwargs: Any) -> RuntimeState:
         return RuntimeState(*args, **kwargs)
 
-    def _setup(self, source: str, file: bool = False) -> RuntimeState:
-        self._lock.acquire()
-        self._state = self._get_state(source=source, file=file)
-        return self._state
-
-    def _cleanup(self) -> None:
-        self._state = None
-        self._lock.release()
-
-    def run(
-        self,
-        source: str,
-        /,
-        *,
-        file: bool = False,
-        wait: bool = True,
-    ) -> None:
-        """Runs the code from provided source.
-
-        The first parameter can either be the PSPL source code or
-        the file name to execute. If it is a file, ``file`` keyword
-        argument must be set to True.
+    def run(self, *, wait: bool = True) -> None:
+        """Runs the code.
 
         This method is thread safe as such if this method is called
         when the runner is already acquired in another thread or task,
-        it will block until runner finishes previous task. ``wait`` can
-        be passed as ``False`` to raise a :exc:`RuntimeError` instead
-        of waiting.
+        it will block until runner finishes previous task.
 
         Parameters
         ----------
-        source: :class:`str`
-            The source file name or code.
-        file: :class:`bool`
-            Whether the passed parameter is a file name. Defaults to False.
         wait: :class:`bool`
             Whether to wait until previous task is finished. When False, raises
             a :exc:`RuntimeError` if the runner is already acquired. Defaults to
             True.
+
+        Raises
+        ------
+        RuntimeError
+            The runner is busy.
         """
         if self._lock.locked() and not wait:
             raise RuntimeError('Runner is already acquired')
 
-        try:
-            state = self._setup(source=source, file=file)
-            state.exec()
-        finally:
-            self._cleanup()
+        with self._lock:
+            self._state.exec()
