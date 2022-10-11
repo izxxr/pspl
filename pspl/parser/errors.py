@@ -22,21 +22,43 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-from pspl.parser import generator
-from pspl import ast
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from pspl.state import RuntimeState
+    from rply.token import SourcePosition
 
-__all__ = ()
+__all__ = (
+    'PSPLParserError',
+    'IdentifierNotDefined',
+)
 
-gen = generator.get()
 
-@gen.production('program : stmt_list')
-def prod_program(state: RuntimeState, tokens: Any):
-    return ast.Block(tokens)
+class PSPLParserError(Exception):
+    """Base class for parser related errors.
 
-@gen.error
-def handle_parser_error(state: RuntimeState, tokens: Any):
-    print(tokens)
+    This exception class is used for internal error handling.
+
+    Attributes
+    ----------
+    source_pos: Optional[:class:`rply.token.SourcePosition`]
+        The source position of error, if available.
+    message: :class:`str`
+        The error message.
+    """
+    def __init__(self, source_pos: Optional[SourcePosition], message: str) -> None:
+        self.source_pos = source_pos
+        self.message = message
+        super().__init__(message)
+
+
+class IdentifierNotDefined(PSPLParserError):
+    """Error indicating that used identifier hasn't been defined.
+
+    Attributes
+    ----------
+    ident: :class:`str`
+        The undefined identifier.
+    """
+    def __init__(self, source_pos: Optional[SourcePosition], ident: str) -> None:
+        self.ident = ident
+        super().__init__(source_pos, 'Identifier %r is not defined.' % ident)

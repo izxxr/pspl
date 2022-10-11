@@ -41,3 +41,16 @@ def prod_stmt_list(state: RuntimeState, tokens: Any):
 @gen.production('stmt : ST_OUTPUT expr')
 def prod_stmt_output(state: RuntimeState, tokens: Any):
     return ast.Output(tokens[1])
+
+@gen.production('stmt : ST_DECLARE IDENT SYM_COLON IDENT')
+def prod_stmt_declare(state: RuntimeState, tokens: Any):
+    # TODO: type validation here
+    return ast.Declare(tokens[1].getstr(), tokens[3].getstr(), state)
+
+@gen.production('stmt : IDENT OP_ASSIGN expr')
+@gen.production('stmt : IDENT SYM_EQUAL expr')
+def prod_assign(state: RuntimeState, tokens: Any):
+    ident = tokens[0].getstr()
+    val = tokens[2]
+    state.add_def(ident, val)
+    return ast.Assignment(ident, val, state)

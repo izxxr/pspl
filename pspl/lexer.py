@@ -35,8 +35,19 @@ TOKENS: Dict[str, str] = {
     # Literals
     'LT_STRING': r'(".+")|(\'.+\')|(\'\')|("")',
 
+    # Operators
+    'OP_ASSIGN': r'<-',
+
+    # Symbols
+    'SYM_EQUAL': r'=',
+    'SYM_COLON': r':',
+
     # Statements
     'ST_OUTPUT': r'OUTPUT',
+    'ST_DECLARE': r'DECLARE',
+
+    # Identifier
+    'IDENT': r'[a-zA-Z_][a-zA-Z\d_]*',
 }
 
 IGNORED_TOKENS: Tuple[str, ...] = (r'\t', r'\s+')

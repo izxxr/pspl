@@ -22,13 +22,19 @@
 
 from __future__ import annotations
 
-from typing import Any, List
+from typing import TYPE_CHECKING, Any
 from pspl.ast.base import Node
+
+if TYPE_CHECKING:
+    from pspl.state import RuntimeState
 
 __all__ = (
     'Statement',
     'Output',
+    'Declare',
+    'Assignment',
 )
+
 
 class Statement(Node):
     """Represents a statement.
@@ -48,5 +54,43 @@ class Output(Statement):
     def __init__(self, value: Node) -> None:
         self.value = value
 
-    def eval(self) -> Any:
+    def eval(self) -> None:
         print(self.value.eval())
+
+
+class Declare(Statement):
+    """Represents a declare statement used for declaring type of an identifier.
+
+    Attributes
+    ----------
+    ident: :class:`str`
+        The identifier string.
+    tp: :class:`str`
+        The type of identifier.
+    """
+    def __init__(self, ident: str, tp: str, state: RuntimeState) -> None:
+        self.ident = ident
+        self.tp = tp
+        self._state = state
+
+    def eval(self) -> None:
+        self._state.add_type_def(self.ident, self.tp)
+
+
+class Assignment(Statement):
+    """Represents an assignment statement.
+
+    Attributes
+    ----------
+    ident: :class:`str`
+        The identifier string.
+    val: :class:`str`
+        The value assigned to identifier.
+    """
+    def __init__(self, ident: str, val: Any, state: RuntimeState) -> None:
+        self.ident = ident
+        self.val = val
+        self._state = state
+
+    def eval(self) -> None:
+        pass

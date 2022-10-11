@@ -25,6 +25,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from pspl.parser import generator
 from pspl import ast
+from pspl.parser.errors import IdentifierNotDefined
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -34,11 +35,17 @@ __all__ = ()
 gen = generator.get()
 
 @gen.production('expr : LT_STRING')
-def prod_program(state: RuntimeState, tokens: Any):
+@gen.production('expr : IDENT')
+def prod_expr(state: RuntimeState, tokens: Any):
     tok = tokens[0].gettokentype()
     val = tokens[0].getstr()
 
     if tok == 'LT_STRING':
-        return ast.String(val[1:-1])
+        return ast.String(val)
+    if tok == 'IDENT':
+        try:
+            return state.get_def(val)
+        except KeyError:
+            raise IdentifierNotDefined(tokens[0].getsourcepos(), val)
 
     assert False

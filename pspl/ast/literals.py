@@ -22,6 +22,7 @@
 
 from __future__ import annotations
 
+from ast import literal_eval
 from pspl.ast.base import Node
 
 __all__ = (
@@ -41,4 +42,4 @@ class String(Node):
         self.value = value
 
     def eval(self) -> str:
-        return self.value
+        return literal_eval(self.value)

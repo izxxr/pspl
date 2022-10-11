@@ -22,8 +22,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
-from pspl.utils import MISSING
+from typing import TYPE_CHECKING, Any, Dict, Optional
+from pspl.parser.errors import PSPLParserError
 from pspl.parser import generator
 from pspl import lexer
 
@@ -62,6 +62,8 @@ class RuntimeState:
 
         self.source = source
         self.file = file
+        self.type_defs: Dict[str, Any] = {}
+        self.defs: Dict[str, Any] = {}
 
     @property
     def filename(self) -> Optional[str]:
@@ -70,6 +72,24 @@ class RuntimeState:
         None is returned if the source is not a file and is the raw source code.
         """
         return self.source if self.file else None
+
+    def add_type_def(self, ident: str, tp: Any) -> None:
+        self.type_defs[ident] = tp
+
+    def get_type_def(self, ident: str) -> Any:
+        return self.type_defs[ident]
+
+    def remove_type_def(self, ident: str) -> Any:
+        return self.type_defs.pop(ident)
+
+    def add_def(self, ident: str, val: Any) -> None:
+        self.defs[ident] = val
+
+    def get_def(self, ident: str) -> Any:
+        return self.defs[ident]
+
+    def remove_def(self, ident: str) -> Any:
+        return self.defs.pop(ident)
 
     def _get_lexer(self) -> Lexer:
         lg = rply.LexerGenerator()
@@ -83,7 +103,7 @@ class RuntimeState:
         gen = generator.get()
         return gen.build()
 
-    def _handle_error(
+    def log_error(
         self,
         error_type: str,
         error_message: str,
@@ -106,9 +126,16 @@ class RuntimeState:
 
         try:
             parser.parse(tokens, state=self).eval()  # type: ignore
-        except rply.LexingError as err:
-            self._handle_error(
-                error_type='SyntaxError',
-                error_message='Invalid syntax',
-                source_pos=err.source_pos,
-            )
+        except (rply.LexingError, PSPLParserError) as err:
+            if isinstance(err, rply.LexingError):
+                self.log_error(
+                    error_type='SyntaxError',
+                    error_message='Invalid syntax',
+                    source_pos=err.source_pos,
+                )
+            else:
+                self.log_error(
+                    error_type=err.__class__.__name__,
+                    error_message=err.message,
+                    source_pos=err.source_pos,
+                )
