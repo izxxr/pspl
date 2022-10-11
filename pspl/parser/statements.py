@@ -23,8 +23,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from pspl.parser.errors import IdentifierNotDefined
 from pspl.parser import generator
-from pspl import ast
+from pspl import ast, lexer
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -40,12 +41,45 @@ def prod_stmt_list(state: RuntimeState, tokens: Any):
 
 @gen.production('stmt : ST_OUTPUT expr')
 def prod_stmt_output(state: RuntimeState, tokens: Any):
-    return ast.Output(tokens[1])
+    value = tokens[1]
+    return ast.Output(value)
 
 @gen.production('stmt : ST_DECLARE IDENT SYM_COLON IDENT')
 def prod_stmt_declare(state: RuntimeState, tokens: Any):
     # TODO: type validation here
-    return ast.Declare(tokens[1].getstr(), tokens[3].getstr(), state)
+    ident = tokens[1].getstr()
+    tp = tokens[3].getstr()
+    state.add_type_def(ident, tp)
+    return ast.Declare(ident, tp, state)
+
+@gen.production('stmt : ST_INPUT IDENT')
+@gen.production('stmt : ST_INPUT expr OP_SEPARATOR IDENT')
+def prod_stmt_input(state: RuntimeState, tokens: Any):
+    maybe_ident = tokens[1]
+    if isinstance(maybe_ident, ast.String):
+        prompt = maybe_ident.eval()
+        ident = tokens[3].getstr()
+    else:
+        prompt = ''
+        ident = maybe_ident.getstr()
+
+    try:
+        tp = state.get_type_def(ident)
+    except KeyError:
+        cast = lambda v: v
+    else:
+        cast = lexer.INPUT_TYPE_CASTS.get(tp, lambda v: v)
+
+    while True:
+        ipt = input(prompt)
+        try:
+            val = cast(ipt)
+        except Exception:
+            continue
+        else:
+            state.add_def(ident, val)
+            break
+    return ast.Input(prompt, ident)
 
 @gen.production('stmt : IDENT OP_ASSIGN expr')
 @gen.production('stmt : IDENT SYM_EQUAL expr')

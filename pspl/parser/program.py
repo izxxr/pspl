@@ -36,7 +36,3 @@ gen = generator.get()
 @gen.production('program : stmt_list')
 def prod_program(state: RuntimeState, tokens: Any):
     return ast.Block(tokens)
-
-@gen.error
-def handle_parser_error(state: RuntimeState, tokens: Any):
-    print(tokens)

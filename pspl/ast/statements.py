@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 from pspl.ast.base import Node
+from pspl import utils
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -33,6 +34,7 @@ __all__ = (
     'Output',
     'Declare',
     'Assignment',
+    'Input',
 )
 
 
@@ -48,14 +50,17 @@ class Output(Statement):
 
     Attributes
     ----------
-    value: :class:`Node`
+    value:
         The value to print.
+    end:
+        The end of line.
     """
-    def __init__(self, value: Node) -> None:
+    def __init__(self, value: Any) -> None:
         self.value = value
 
     def eval(self) -> None:
-        print(self.value.eval())
+        value = utils.maybe_eval(self.value)
+        print(value)
 
 
 class Declare(Statement):
@@ -74,7 +79,7 @@ class Declare(Statement):
         self._state = state
 
     def eval(self) -> None:
-        self._state.add_type_def(self.ident, self.tp)
+        pass
 
 
 class Assignment(Statement):
@@ -91,6 +96,24 @@ class Assignment(Statement):
         self.ident = ident
         self.val = val
         self._state = state
+
+    def eval(self) -> None:
+        pass
+
+
+class Input(Statement):
+    """Represents an input statement used for taking input from user.
+
+    Attributes
+    ----------
+    prompt: :class:`str`
+        The prompt to show.
+    ident: :class:`Node`
+        The identifier to store the input in.
+    """
+    def __init__(self, prompt: str, ident: str) -> None:
+        self.prompt = prompt
+        self.ident = ident
 
     def eval(self) -> None:
         pass

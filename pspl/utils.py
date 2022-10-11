@@ -28,6 +28,7 @@ from typing import Any
 
 __all__ = (
     'MISSING',
+    'maybe_eval',
 )
 
 
@@ -45,3 +46,9 @@ class _Missing:
 
 MISSING: Any = _Missing()
 """A type safe sentinel used where None may be ambiguous."""
+
+
+def maybe_eval(val: Any) -> Any:
+    if hasattr(val, 'eval'):
+        return val.eval()
+    return val
