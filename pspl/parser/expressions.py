@@ -39,6 +39,15 @@ gen = generator.get()
 def prod_expr_parens(state: RuntimeState, tokens: Any):
     return tokens[1]
 
+@gen.production('expr : OP_MINUS expr')
+@gen.production('expr : OP_PLUS expr')
+def prod_expr_sign(state: RuntimeState, tokens: Any):
+    operation = tokens[0].gettokentype()
+    if operation == 'OP_MINUS':
+        return ast.Subtract(0, tokens[1])
+    if operation == 'OP_PLUS':
+        return ast.Add(0, tokens[1])
+
 @gen.production('expr : expr OP_PLUS expr')
 @gen.production('expr : expr OP_MINUS expr')
 @gen.production('expr : expr OP_MUL expr')

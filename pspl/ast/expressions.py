@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 from pspl.ast.base import Node
+from pspl import utils
 
 __all__ = (
     'ArithmeticExpression',
@@ -44,22 +45,22 @@ class ArithmeticExpression(Node):
 class Add(ArithmeticExpression):
     """Represents an addition expression."""
     def eval(self) -> Any:
-        return self.left.eval() + self.right.eval()
+        return utils.maybe_eval(self.left) + utils.maybe_eval(self.right)
 
 
 class Subtract(ArithmeticExpression):
     """Represents a subtraction expression."""
     def eval(self) -> Any:
-        return self.left.eval() - self.right.eval()
+        return utils.maybe_eval(self.left) - utils.maybe_eval(self.right)
 
 
 class Div(ArithmeticExpression):
     """Represents a division expression."""
     def eval(self) -> Any:
-        return self.left.eval() / self.right.eval()
+        return utils.maybe_eval(self.left) / utils.maybe_eval(self.right)
 
 
 class Mul(ArithmeticExpression):
     """Represents a multiplication expression."""
     def eval(self) -> Any:
-        return self.left.eval() * self.right.eval()
+        return utils.maybe_eval(self.left) * utils.maybe_eval(self.right)
