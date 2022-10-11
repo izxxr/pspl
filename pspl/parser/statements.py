@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
-from pspl.parser.errors import IdentifierNotDefined
+from pspl.parser.errors import UnknownType
 from pspl.parser import generator
 from pspl import ast, lexer
 
@@ -46,9 +46,12 @@ def prod_stmt_output(state: RuntimeState, tokens: Any):
 
 @gen.production('stmt : ST_DECLARE IDENT SYM_COLON IDENT')
 def prod_stmt_declare(state: RuntimeState, tokens: Any):
-    # TODO: type validation here
     ident = tokens[1].getstr()
     tp = tokens[3].getstr()
+
+    if not tp in lexer.BUILTIN_TYPES:
+        raise UnknownType(tokens[3].getsourcepos(), tp)
+
     state.add_type_def(ident, tp)
     return ast.Declare(ident, tp, state)
 

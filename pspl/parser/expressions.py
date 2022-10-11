@@ -35,6 +35,7 @@ __all__ = ()
 gen = generator.get()
 
 @gen.production('expr : LT_STRING')
+@gen.production('expr : LT_INTEGER')
 @gen.production('expr : IDENT')
 def prod_expr(state: RuntimeState, tokens: Any):
     tok = tokens[0].gettokentype()
@@ -42,6 +43,8 @@ def prod_expr(state: RuntimeState, tokens: Any):
 
     if tok == 'LT_STRING':
         return ast.String(val)
+    if tok == 'LT_INTEGER':
+        return ast.Integer(val)
     if tok == 'IDENT':
         try:
             return state.get_def(val)

@@ -62,3 +62,16 @@ class IdentifierNotDefined(PSPLParserError):
     def __init__(self, source_pos: Optional[SourcePosition], ident: str) -> None:
         self.ident = ident
         super().__init__(source_pos, 'Identifier %r is not defined.' % ident)
+
+
+class UnknownType(PSPLParserError):
+    """Error indicating that type used in DECLARE statement is invalid.
+
+    Attributes
+    ----------
+    tp: :class:`str`
+        The invalid type.
+    """
+    def __init__(self, source_pos: Optional[SourcePosition], tp: str) -> None:
+        self.tp = tp
+        super().__init__(source_pos, 'Type %r is invalid' % tp)

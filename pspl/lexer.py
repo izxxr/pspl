@@ -36,6 +36,7 @@ __all__ = (
 TOKENS: Dict[str, str] = {
     # Literals
     'LT_STRING': r'(".+")|(\'.+\')|(\'\')|("")',
+    'LT_INTEGER': r'\d+',
 
     # Operators
     'OP_ASSIGN': r'<-',
@@ -58,8 +59,10 @@ IGNORED_TOKENS: Tuple[str, ...] = (r'\t', r'\s+')
 
 BUILTIN_TYPES: Tuple[str, ...] = (
     'STRING',
+    'INTEGER',
 )
 
 INPUT_TYPE_CASTS: Dict[str, Callable[[str], Any]] = {
     'STRING': str,
+    'INTEGER': int,
 }

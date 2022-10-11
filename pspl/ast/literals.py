@@ -27,6 +27,7 @@ from pspl.ast.base import Node
 
 __all__ = (
     'String',
+    'Integer',
 )
 
 
@@ -43,3 +44,18 @@ class String(Node):
 
     def eval(self) -> str:
         return literal_eval(self.value)
+
+
+class Integer(Node):
+    """Represents an integer literal.
+
+    Attributes
+    ----------
+    value: :class:`int`
+        The underlying integer literal.
+    """
+    def __init__(self, value: int) -> None:
+        self.value = value
+
+    def eval(self) -> int:
+        return int(self.value)
