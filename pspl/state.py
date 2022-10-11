@@ -23,7 +23,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
-
 from pspl.utils import MISSING
 from pspl.parser import generator
 from pspl import lexer
@@ -33,6 +32,7 @@ import rply
 if TYPE_CHECKING:
     from rply.lexer import Lexer
     from rply.parser import LRParser
+    from rply.token import SourcePosition
 
 __all__ = (
     'RuntimeState',
@@ -83,6 +83,16 @@ class RuntimeState:
         gen = generator.get()
         return gen.build()
 
+    def _handle_error(
+        self,
+        error_type: str,
+        error_message: str,
+        source_pos: Optional[SourcePosition] = None,
+    ) -> None:
+        if source_pos:
+            print(f'At line {source_pos.lineno}, column {source_pos.colno}, index {source_pos.idx}:')
+        print(f'{error_type}: {error_message}')
+
     def exec(self) -> None:
         """Start the execution process."""
         src = self.source
@@ -92,6 +102,13 @@ class RuntimeState:
 
         lexer = self._get_lexer()
         parser = self._get_parser()
-
         tokens = lexer.lex(src)
-        parser.parse(tokens, state=self).eval()  # type: ignore
+
+        try:
+            parser.parse(tokens, state=self).eval()  # type: ignore
+        except rply.LexingError as err:
+            self._handle_error(
+                error_type='SyntaxError',
+                error_message='Invalid syntax',
+                source_pos=err.source_pos,
+            )
