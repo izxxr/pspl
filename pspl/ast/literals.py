@@ -51,10 +51,10 @@ class Integer(Node):
 
     Attributes
     ----------
-    value: :class:`int`
+    value: :class:`str`
         The underlying integer literal.
     """
-    def __init__(self, value: int) -> None:
+    def __init__(self, value: str) -> None:
         self.value = value
 
     def eval(self) -> int:
