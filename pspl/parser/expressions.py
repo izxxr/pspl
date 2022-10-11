@@ -24,8 +24,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 from pspl.parser import generator
-from pspl import ast
 from pspl.parser.errors import IdentifierNotDefined
+from pspl import ast
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -33,6 +33,30 @@ if TYPE_CHECKING:
 __all__ = ()
 
 gen = generator.get()
+
+
+@gen.production('expr : SYM_LPAREN expr SYM_RPAREN')
+def prod_expr_parens(state: RuntimeState, tokens: Any):
+    return tokens[1]
+
+@gen.production('expr : expr OP_PLUS expr')
+@gen.production('expr : expr OP_MINUS expr')
+@gen.production('expr : expr OP_MUL expr')
+@gen.production('expr : expr OP_DIV expr')
+def prod_expr_am_operations(state: RuntimeState, tokens: Any):
+    operation = tokens[1].gettokentype()
+    left = tokens[0]
+    right = tokens[2]
+
+    if operation == 'OP_PLUS':
+        return ast.Add(left, right)
+    if operation == 'OP_MINUS':
+        return ast.Subtract(left, right)
+    if operation == 'OP_MUL':
+        return ast.Mul(left, right)
+    if operation == 'OP_DIV':
+        return ast.Div(left, right)
+
 
 @gen.production('expr : LT_STRING')
 @gen.production('expr : LT_INTEGER')

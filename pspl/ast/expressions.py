@@ -20,41 +20,46 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Helpers for manipulating internal :class:`rply.ParserGenerator` instance."""
-
 from __future__ import annotations
 
-from typing import Optional
-from pspl import lexer
-
-import rply
+from typing import Any
+from pspl.ast.base import Node
 
 __all__ = (
-    "get",
-    "reset",
+    'ArithmeticExpression',
+    'Add',
+    'Subtract',
+    'Div',
+    'Mul',
 )
 
-_gen: Optional[rply.ParserGenerator] = None
+
+class ArithmeticExpression(Node):
+    """Base class for arithmetic operators."""
+    def __init__(self, left: Any, right: Any) -> None:
+        self.left = left
+        self.right = right
 
 
-def get() -> rply.ParserGenerator:
-    """Returns the :class:`rply.ParserGenerator` object.
-
-    This function caches the generator instance and returns
-    it on subsequent calls.
-    """
-    global _gen
-    if _gen:
-        return _gen
-    _gen = rply.ParserGenerator(lexer.TOKENS, precedence=lexer.PRECEDENCE)
-    return _gen
+class Add(ArithmeticExpression):
+    """Represents an addition expression."""
+    def eval(self) -> Any:
+        return self.left.eval() + self.right.eval()
 
 
-def reset() -> None:
-    """Resets the generator cache.
+class Subtract(ArithmeticExpression):
+    """Represents a subtraction expression."""
+    def eval(self) -> Any:
+        return self.left.eval() - self.right.eval()
 
-    After calling this method, :func:`get_generator` constructs a new
-    generator instance rather than returning a cached one.
-    """
-    global _gen
-    _gen = None
+
+class Div(ArithmeticExpression):
+    """Represents a division expression."""
+    def eval(self) -> Any:
+        return self.left.eval() / self.right.eval()
+
+
+class Mul(ArithmeticExpression):
+    """Represents a multiplication expression."""
+    def eval(self) -> Any:
+        return self.left.eval() * self.right.eval()

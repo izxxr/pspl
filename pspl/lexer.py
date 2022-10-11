@@ -24,7 +24,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 __all__ = (
     'TOKENS',
@@ -41,10 +41,16 @@ TOKENS: Dict[str, str] = {
     # Operators
     'OP_ASSIGN': r'<-',
     'OP_SEPARATOR': r',',
+    'OP_PLUS': r'\+',
+    'OP_MINUS': r'-',
+    'OP_DIV': r'/',
+    'OP_MUL': r'\*',
 
     # Symbols
     'SYM_EQUAL': r'=',
     'SYM_COLON': r':',
+    'SYM_LPAREN': r'\(',
+    'SYM_RPAREN': r'\)',
 
     # Statements
     'ST_OUTPUT': r'OUTPUT',
@@ -56,6 +62,11 @@ TOKENS: Dict[str, str] = {
 }
 
 IGNORED_TOKENS: Tuple[str, ...] = (r'\t', r'\s+')
+
+PRECEDENCE: Tuple[Tuple[str, List[str]], ...] = (
+    ('left', ['OP_PLUS', 'OP_MINUS']),
+    ('left', ['OP_MUL', 'OP_DIV']),
+)
 
 BUILTIN_TYPES: Tuple[str, ...] = (
     'STRING',
