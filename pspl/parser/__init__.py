@@ -4,5 +4,7 @@ pspl.parser
 
 Implementation of PSPL language parser.
 """
-
-from pspl.parser.generator import *
+from .program import *
+from .statements import *
+from .expressions import *
+from .generator import *

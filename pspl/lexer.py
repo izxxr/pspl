@@ -31,5 +31,12 @@ __all__ = (
     'IGNORED_TOKENS',
 )
 
-TOKENS: Dict[str, str] = {}
+TOKENS: Dict[str, str] = {
+    # Literals
+    'LT_STRING': r'(".+")|(\'.+\')|(\'\')|("")',
+
+    # Statements
+    'ST_OUTPUT': r'OUTPUT',
+}
+
 IGNORED_TOKENS: Tuple[str, ...] = (r'\t', r'\s+')

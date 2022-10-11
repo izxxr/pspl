@@ -20,41 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Helpers for manipulating internal :class:`rply.ParserGenerator` instance."""
-
 from __future__ import annotations
 
-from typing import Optional
-from pspl import lexer
+from typing import TYPE_CHECKING, Any
+from pspl.parser import generator
+from pspl import ast
 
-import rply
+if TYPE_CHECKING:
+    from pspl.state import RuntimeState
 
-__all__ = (
-    "get",
-    "reset",
-)
+__all__ = ()
 
-_gen: Optional[rply.ParserGenerator] = None
+gen = generator.get()
 
+@gen.production('stmt_list : stmt')
+@gen.production('stmt_list : stmt_list stmt')
+def prod_stmt_list(state: RuntimeState, tokens: Any):
+    return ast.Program(tokens)
 
-def get() -> rply.ParserGenerator:
-    """Returns the :class:`rply.ParserGenerator` object.
-
-    This function caches the generator instance and returns
-    it on subsequent calls.
-    """
-    global _gen
-    if _gen:
-        return _gen
-    _gen = rply.ParserGenerator(lexer.TOKENS)
-    return _gen
-
-
-def reset() -> None:
-    """Resets the generator cache.
-
-    After calling this method, :func:`get_generator` constructs a new
-    generator instance rather than returning a cached one.
-    """
-    global _gen
-    _gen = None
+@gen.production('stmt : ST_OUTPUT expr')
+def prod_stmt_output(state: RuntimeState, tokens: Any):
+    return ast.Output(tokens[1])

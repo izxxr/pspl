@@ -25,7 +25,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 
 from pspl.utils import MISSING
-from pspl import parser, lexer
+from pspl.parser import generator
+from pspl import lexer
 
 import rply
 
@@ -79,7 +80,7 @@ class RuntimeState:
         return lg.build()
 
     def _get_parser(self) -> LRParser:
-        gen = parser.get_generator()
+        gen = generator.get()
         return gen.build()
 
     def exec(self) -> None:
@@ -93,4 +94,4 @@ class RuntimeState:
         parser = self._get_parser()
 
         tokens = lexer.lex(src)
-        parser.parse(tokens, state=self)
+        parser.parse(tokens, state=self).eval()  # type: ignore

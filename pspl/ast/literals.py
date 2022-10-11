@@ -20,41 +20,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Helpers for manipulating internal :class:`rply.ParserGenerator` instance."""
-
 from __future__ import annotations
 
-from typing import Optional
-from pspl import lexer
-
-import rply
+from pspl.ast.base import Node
 
 __all__ = (
-    "get",
-    "reset",
+    'String',
 )
 
-_gen: Optional[rply.ParserGenerator] = None
 
+class String(Node):
+    """Represents a string literal.
 
-def get() -> rply.ParserGenerator:
-    """Returns the :class:`rply.ParserGenerator` object.
-
-    This function caches the generator instance and returns
-    it on subsequent calls.
+    Attributes
+    ----------
+    value: :class:`str`
+        The underlying string literal.
     """
-    global _gen
-    if _gen:
-        return _gen
-    _gen = rply.ParserGenerator(lexer.TOKENS)
-    return _gen
+    def __init__(self, value: str) -> None:
+        self.value = value
 
-
-def reset() -> None:
-    """Resets the generator cache.
-
-    After calling this method, :func:`get_generator` constructs a new
-    generator instance rather than returning a cached one.
-    """
-    global _gen
-    _gen = None
+    def eval(self) -> str:
+        return self.value
