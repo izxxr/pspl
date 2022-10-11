@@ -36,7 +36,7 @@ gen = generator.get()
 @gen.production('stmt_list : stmt')
 @gen.production('stmt_list : stmt_list stmt')
 def prod_stmt_list(state: RuntimeState, tokens: Any):
-    return ast.Program(tokens)
+    return ast.Block(tokens)
 
 @gen.production('stmt : ST_OUTPUT expr')
 def prod_stmt_output(state: RuntimeState, tokens: Any):

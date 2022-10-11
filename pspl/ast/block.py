@@ -27,20 +27,20 @@ from pspl.ast.base import Node
 from pspl.ast.statements import Statement
 
 __all__ = (
-    'Program',
+    'Block',
 )
 
 
-class Program(Node):
-    """Represents a PSPL program.
+class Block(Node):
+    """Represents a statements block.
 
-    This is the top level class that evaluates the statements
-    inside a PSPL program.
+    A block contain several statements that are evaluated
+    sequentially.
 
     Attributes
     ----------
     statements: List[:class:`Statement`]
-        The list of statements.
+        The list of statements in the block.
     """
     def __init__(self, statements: List[Statement]) -> None:
         self.statements = statements
@@ -48,4 +48,3 @@ class Program(Node):
     def eval(self) -> None:
         for stmt in self.statements:
             stmt.eval()
-

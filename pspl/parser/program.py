@@ -35,4 +35,4 @@ gen = generator.get()
 
 @gen.production('program : stmt_list')
 def prod_program(state: RuntimeState, tokens: Any):
-    return ast.Program(tokens[0])
+    return ast.Block(tokens)
