@@ -84,8 +84,16 @@ BUILTIN_TYPES: Tuple[str, ...] = (
     'BOOLEAN',
 )
 
+def _bool_type_cast(v: str) -> bool:
+    v = v.lower()
+    if v in ('true', '1'):
+        return True
+    if v in ('false', '0'):
+        return False
+    raise ValueError('invalid input')
+
 INPUT_TYPE_CASTS: Dict[str, Callable[[str], Any]] = {
     'STRING': str,
     'INTEGER': int,
-    'BOOLEAN': lambda v: v.lower() in ('true', '1')
+    'BOOLEAN': _bool_type_cast,
 }
