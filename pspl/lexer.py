@@ -48,6 +48,11 @@ TOKENS: Dict[str, str] = {
     'OP_DIV': r'/',
     'OP_MUL': r'\*',
     'OP_EQ': r'=',
+    'OP_NEQ': r'<>',
+    'OP_GT': r'>',
+    'OP_LT': r'<',
+    'OP_GTEQ': r'>=',
+    'OP_LTEQ': r'<=',
 
     # Symbols
     'SYM_COLON': r':',
@@ -68,6 +73,9 @@ IGNORED_TOKENS: Tuple[str, ...] = (r'\t', r'\s+')
 PRECEDENCE: Tuple[Tuple[str, List[str]], ...] = (
     ('left', ['OP_PLUS', 'OP_MINUS']),
     ('left', ['OP_MUL', 'OP_DIV']),
+    ('left', ['OP_EQ', 'OP_NEQ']),
+    ('left', ['OP_GT', 'OP_LT']),
+    ('left', ['OP_GTEQ', 'OP_LTEQ']),
 )
 
 BUILTIN_TYPES: Tuple[str, ...] = (

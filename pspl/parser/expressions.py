@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict, Type
 from pspl.parser import generator
 from pspl.parser.errors import IdentifierNotDefined
 from pspl import ast
@@ -34,37 +34,21 @@ __all__ = ()
 
 gen = generator.get()
 
+ARITHMETIC_EXPRESSION_NODES: Dict[str, Type[ast.ArithmeticExpression]] = {
+    'OP_PLUS': ast.Add,
+    'OP_MINUS': ast.Subtract,
+    'OP_MUL': ast.Mul,
+    'OP_DIV': ast.Div,
+}
 
-@gen.production('expr : SYM_LPAREN expr SYM_RPAREN')
-def prod_expr_parens(state: RuntimeState, tokens: Any):
-    return tokens[1]
-
-@gen.production('expr : OP_MINUS expr')
-@gen.production('expr : OP_PLUS expr')
-def prod_expr_sign(state: RuntimeState, tokens: Any):
-    operation = tokens[0].gettokentype()
-    if operation == 'OP_MINUS':
-        return ast.Subtract(0, tokens[1])
-    if operation == 'OP_PLUS':
-        return ast.Add(0, tokens[1])
-
-@gen.production('expr : expr OP_PLUS expr')
-@gen.production('expr : expr OP_MINUS expr')
-@gen.production('expr : expr OP_MUL expr')
-@gen.production('expr : expr OP_DIV expr')
-def prod_expr_am_operations(state: RuntimeState, tokens: Any):
-    operation = tokens[1].gettokentype()
-    left = tokens[0]
-    right = tokens[2]
-
-    if operation == 'OP_PLUS':
-        return ast.Add(left, right)
-    if operation == 'OP_MINUS':
-        return ast.Subtract(left, right)
-    if operation == 'OP_MUL':
-        return ast.Mul(left, right)
-    if operation == 'OP_DIV':
-        return ast.Div(left, right)
+BOOLEAN_EXPRESSION_NODES: Dict[str, Type[ast.BooleanExpression]] = {
+    'OP_EQ': ast.Eq,
+    'OP_NEQ': ast.NEq,
+    'OP_GT': ast.Gt,
+    'OP_LT': ast.Lt,
+    'OP_GTEQ': ast.GtEq,
+    'OP_LTEQ': ast.LtEq,
+}
 
 
 @gen.production('expr : LT_STRING')
@@ -91,3 +75,36 @@ def prod_expr(state: RuntimeState, tokens: Any):
             raise IdentifierNotDefined(tokens[0].getsourcepos(), val)
 
     assert False
+
+@gen.production('expr : SYM_LPAREN expr SYM_RPAREN')
+def prod_expr_parens(state: RuntimeState, tokens: Any):
+    return tokens[1]
+
+@gen.production('expr : OP_MINUS expr')
+@gen.production('expr : OP_PLUS expr')
+def prod_expr_sign(state: RuntimeState, tokens: Any):
+    operation = tokens[0].gettokentype()
+    if operation == 'OP_MINUS':
+        return ast.Subtract(0, tokens[1])
+    if operation == 'OP_PLUS':
+        return ast.Add(0, tokens[1])
+
+@gen.production('expr : expr OP_PLUS expr')
+@gen.production('expr : expr OP_MINUS expr')
+@gen.production('expr : expr OP_MUL expr')
+@gen.production('expr : expr OP_DIV expr')
+def prod_expr_am_operations(state: RuntimeState, tokens: Any):
+    op = tokens[1].gettokentype()
+    left, right = tokens[0], tokens[2]
+    return ARITHMETIC_EXPRESSION_NODES[op](left, right)
+
+@gen.production('expr : expr OP_EQ expr')
+@gen.production('expr : expr OP_NEQ expr')
+@gen.production('expr : expr OP_GT expr')
+@gen.production('expr : expr OP_LT expr')
+@gen.production('expr : expr OP_GTEQ expr')
+@gen.production('expr : expr OP_LTEQ expr')
+def prod_expr_bool(state: RuntimeState, tokens: Any):
+    op = tokens[1].gettokentype()
+    left, right = tokens[0], tokens[2]
+    return BOOLEAN_EXPRESSION_NODES[op](left, right)

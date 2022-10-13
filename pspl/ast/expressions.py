@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 from pspl.ast.base import Node
+from pspl.ast.literals import Boolean
 from pspl import utils
 
 __all__ = (
@@ -32,6 +33,13 @@ __all__ = (
     'Subtract',
     'Div',
     'Mul',
+    'BooleanExpression',
+    'Eq',
+    'NEq',
+    'Gt',
+    'GtEq',
+    'Lt',
+    'LtEq',
 )
 
 
@@ -44,23 +52,72 @@ class ArithmeticExpression(Node):
 
 class Add(ArithmeticExpression):
     """Represents an addition expression."""
-    def eval(self) -> Any:
+    def eval(self) -> int:
         return utils.maybe_eval(self.left) + utils.maybe_eval(self.right)
 
 
 class Subtract(ArithmeticExpression):
     """Represents a subtraction expression."""
-    def eval(self) -> Any:
+    def eval(self) -> int:
         return utils.maybe_eval(self.left) - utils.maybe_eval(self.right)
 
 
 class Div(ArithmeticExpression):
     """Represents a division expression."""
-    def eval(self) -> Any:
+    def eval(self) -> int:
         return utils.maybe_eval(self.left) / utils.maybe_eval(self.right)
 
 
 class Mul(ArithmeticExpression):
     """Represents a multiplication expression."""
-    def eval(self) -> Any:
+    def eval(self) -> int:
         return utils.maybe_eval(self.left) * utils.maybe_eval(self.right)
+
+
+class BooleanExpression(Node):
+    """Base class for various boolean expressions."""
+    def __init__(self, left: Any, right: Any) -> None:
+        self.left = left
+        self.right = right
+
+    def eval(self) -> Boolean:
+        ...
+
+    def __pspl_output__(self) -> str:
+        return self.eval().__pspl_output__()
+
+
+class Eq(BooleanExpression):
+    """Represents an equality boolean expression."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) == utils.maybe_eval(self.right))
+
+
+class NEq(BooleanExpression):
+    """Represents an inequality boolean expression."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) != utils.maybe_eval(self.right))
+
+
+class Gt(BooleanExpression):
+    """Represents a greater than boolean expression."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) > utils.maybe_eval(self.right))
+
+
+class GtEq(BooleanExpression):
+    """Represents a greater than or equality boolean expression."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) >= utils.maybe_eval(self.right))
+
+
+class Lt(BooleanExpression):
+    """Represents a less than boolean expression."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) < utils.maybe_eval(self.right))
+
+
+class LtEq(BooleanExpression):
+    """Represents an less than or equality boolean expression."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) <= utils.maybe_eval(self.right))
