@@ -69,6 +69,8 @@ def prod_expr_am_operations(state: RuntimeState, tokens: Any):
 
 @gen.production('expr : LT_STRING')
 @gen.production('expr : LT_INTEGER')
+@gen.production('expr : LT_BOOLEAN_TRUE')
+@gen.production('expr : LT_BOOLEAN_FALSE')
 @gen.production('expr : IDENT')
 def prod_expr(state: RuntimeState, tokens: Any):
     tok = tokens[0].gettokentype()
@@ -78,6 +80,10 @@ def prod_expr(state: RuntimeState, tokens: Any):
         return ast.String(val)
     if tok == 'LT_INTEGER':
         return ast.Integer(val)
+    if tok == 'LT_BOOLEAN_TRUE':
+        return ast.Boolean(True)
+    if tok == 'LT_BOOLEAN_FALSE':
+        return ast.Boolean(False)
     if tok == 'IDENT':
         try:
             return state.get_def(val)

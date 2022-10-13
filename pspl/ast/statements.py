@@ -59,7 +59,10 @@ class Output(Statement):
         self.value = value
 
     def eval(self) -> None:
-        value = utils.maybe_eval(self.value)
+        if hasattr(self.value, '__pspl_output__'):
+            value = self.value.__pspl_output__()
+        else:
+            value = utils.maybe_eval(self.value)
         print(value)
 
 

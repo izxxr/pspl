@@ -37,17 +37,19 @@ TOKENS: Dict[str, str] = {
     # Literals
     'LT_STRING': r'(".+")|(\'.+\')|(\'\')|("")',
     'LT_INTEGER': r'\d+',
+    'LT_BOOLEAN_TRUE': r'TRUE',
+    'LT_BOOLEAN_FALSE': r'FALSE',
 
     # Operators
     'OP_ASSIGN': r'<-',
-    'OP_SEPARATOR': r',',
+    'OP_SEP': r',',
     'OP_PLUS': r'\+',
     'OP_MINUS': r'-',
     'OP_DIV': r'/',
     'OP_MUL': r'\*',
+    'OP_EQ': r'=',
 
     # Symbols
-    'SYM_EQUAL': r'=',
     'SYM_COLON': r':',
     'SYM_LPAREN': r'\(',
     'SYM_RPAREN': r'\)',
@@ -71,9 +73,11 @@ PRECEDENCE: Tuple[Tuple[str, List[str]], ...] = (
 BUILTIN_TYPES: Tuple[str, ...] = (
     'STRING',
     'INTEGER',
+    'BOOLEAN',
 )
 
 INPUT_TYPE_CASTS: Dict[str, Callable[[str], Any]] = {
     'STRING': str,
     'INTEGER': int,
+    'BOOLEAN': lambda v: v.lower() in ('true', '1')
 }

@@ -28,6 +28,7 @@ from pspl.ast.base import Node
 __all__ = (
     'String',
     'Integer',
+    'Boolean',
 )
 
 
@@ -59,3 +60,21 @@ class Integer(Node):
 
     def eval(self) -> int:
         return int(self.value)
+
+
+class Boolean(Node):
+    """Represents a boolean literal.
+
+    Attributes
+    ----------
+    value: :class:`bool`
+        The underlying boolean literal.
+    """
+    def __init__(self, value: bool) -> None:
+        self.value = value
+
+    def __pspl_output__(self) -> str:
+        return str(self.value).upper()
+
+    def eval(self) -> bool:
+        return self.value

@@ -56,7 +56,7 @@ def prod_stmt_declare(state: RuntimeState, tokens: Any):
     return ast.Declare(ident, tp, state)
 
 @gen.production('stmt : ST_INPUT IDENT')
-@gen.production('stmt : ST_INPUT expr OP_SEPARATOR IDENT')
+@gen.production('stmt : ST_INPUT expr OP_SEP IDENT')
 def prod_stmt_input(state: RuntimeState, tokens: Any):
     maybe_ident = tokens[1]
     if isinstance(maybe_ident, ast.String):
@@ -85,7 +85,6 @@ def prod_stmt_input(state: RuntimeState, tokens: Any):
     return ast.Input(prompt, ident)
 
 @gen.production('stmt : IDENT OP_ASSIGN expr')
-@gen.production('stmt : IDENT SYM_EQUAL expr')
 def prod_assign(state: RuntimeState, tokens: Any):
     ident = tokens[0].getstr()
     val = tokens[2]
