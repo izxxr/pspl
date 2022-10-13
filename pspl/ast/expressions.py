@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Union
 from pspl.ast.base import Node
 from pspl.ast.literals import Boolean
 from pspl import utils
@@ -52,8 +52,12 @@ class ArithmeticExpression(Node):
 
 class Add(ArithmeticExpression):
     """Represents an addition expression."""
-    def eval(self) -> int:
-        return utils.maybe_eval(self.left) + utils.maybe_eval(self.right)
+    def eval(self) -> Union[int, str]:
+        lhs = utils.maybe_eval(self.left)
+        rhs = utils.maybe_eval(self.right)
+        if isinstance(lhs, str) or isinstance(rhs, str):
+            return str(lhs) + str(rhs)
+        return lhs + rhs
 
 
 class Subtract(ArithmeticExpression):
