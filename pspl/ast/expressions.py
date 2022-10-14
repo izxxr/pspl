@@ -87,6 +87,9 @@ class BooleanExpression(Node):
     def eval(self) -> Boolean:
         ...
 
+    def __pspl_bool__(self) -> bool:
+        return self.eval().value
+
     def __pspl_output__(self) -> str:
         return self.eval().__pspl_output__()
 

@@ -63,6 +63,10 @@ TOKENS: Dict[str, str] = {
     'ST_OUTPUT': r'OUTPUT',
     'ST_DECLARE': r'DECLARE',
     'ST_INPUT': r'INPUT',
+    'ST_THEN': r'THEN',
+    'ST_IF': r'IF',
+    'ST_ENDIF': r'ENDIF',
+    'ST_ELSE': r'ELSE',
 
     # Identifier
     'IDENT': r'[a-zA-Z_][a-zA-Z\d_]*',

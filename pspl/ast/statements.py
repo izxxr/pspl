@@ -22,12 +22,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 from pspl.ast.base import Node
 from pspl import utils
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
+    from pspl.ast.block import Block
 
 __all__ = (
     'Statement',
@@ -35,6 +36,7 @@ __all__ = (
     'Declare',
     'Assignment',
     'Input',
+    'If',
 )
 
 
@@ -120,3 +122,29 @@ class Input(Statement):
 
     def eval(self) -> None:
         pass
+
+
+class If(Statement):
+    """Represents an if conditional statement.
+    
+    Parameters
+    ----------
+    expr:
+        The expression to check for.
+    block: :class:`ast.Block`
+        The block to execute.
+    """
+    def __init__(self, expr: Any, block: Block, else_block: Optional[Block] = None) -> None:
+        self.expr = expr
+        self.block = block
+        self.else_block = else_block
+
+    def eval(self) -> Any:
+        val = True
+        if hasattr(self.expr, '__pspl_bool__'):
+            val = self.expr.__pspl_bool__()
+        if val:
+            self.block.eval()
+        else:
+            if self.else_block:
+                self.else_block.eval()

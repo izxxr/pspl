@@ -23,6 +23,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from rply.token import Token
+from pspl.parser.errors import PSPLParserError
 from pspl.parser import generator
 from pspl import ast
 
@@ -36,3 +38,16 @@ gen = generator.get()
 @gen.production('program : stmt_list')
 def prod_program(state: RuntimeState, tokens: Any):
     return ast.Block(tokens)
+
+@gen.error
+def generator_error_handler(state: RuntimeState, token: Token):
+    tp = token.gettokentype()
+    inner = token.getstr()
+    pos = token.getsourcepos()
+    
+    if tp == '$end':
+        msg = 'Unexpected end of program'
+    else:
+        msg = f'Unexpected token {inner} ({tp})'
+
+    raise PSPLParserError(source_pos=pos, message=msg)

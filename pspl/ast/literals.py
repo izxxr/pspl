@@ -73,6 +73,9 @@ class Boolean(Node):
     def __init__(self, value: bool) -> None:
         self.value = value
 
+    def __pspl_bool__(self) -> bool:
+        return self.value
+
     def __pspl_output__(self) -> str:
         return str(self.value).upper()
 

@@ -90,3 +90,12 @@ def prod_assign(state: RuntimeState, tokens: Any):
     val = tokens[2]
     state.add_def(ident, val)
     return ast.Assignment(ident, val, state)
+
+
+@gen.production('stmt : ST_IF expr ST_THEN stmt_list ST_ENDIF')
+@gen.production('stmt : ST_IF expr ST_THEN stmt_list ST_ELSE stmt_list ST_ENDIF')
+def prod_if(state: RuntimeState, tokens: Any):
+    else_block = None
+    if tokens[4].gettokentype() == 'ST_ELSE':
+        else_block = tokens[5]
+    return ast.If(expr=tokens[1], block=tokens[3], else_block=else_block)
