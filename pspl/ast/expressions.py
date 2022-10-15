@@ -22,12 +22,18 @@
 
 from __future__ import annotations
 
-from typing import Any, Union
-from pspl.ast.base import Node
+from typing import TYPE_CHECKING, Any, Union
 from pspl.ast.literals import Boolean
+from pspl.ast.base import Node
+from pspl.parser.errors import IdentifierNotDefined
 from pspl import utils
 
+if TYPE_CHECKING:
+    from pspl.state import RuntimeState
+    from rply.token import SourcePosition
+
 __all__ = (
+    'Ident',
     'ArithmeticExpression',
     'Add',
     'Subtract',
@@ -41,6 +47,20 @@ __all__ = (
     'Lt',
     'LtEq',
 )
+
+
+class Ident(Node):
+    """Represents an identifier"""
+    def __init__(self, name: str, state: RuntimeState, pos: SourcePosition) -> None:
+        self.name = name
+        self.pos = pos
+        self._state = state
+
+    def eval(self) -> Any:
+        try:
+            return self._state.get_def(self.name)
+        except KeyError:
+            raise IdentifierNotDefined(self.pos, self.name)
 
 
 class ArithmeticExpression(Node):

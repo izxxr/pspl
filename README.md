@@ -15,13 +15,14 @@ of features:
 - Arithmetic Expressions
 - Boolean Expressions
 - Basic I/O operations
-- Basic conditionals
+- Simple conditional statements
+- Basic for loop
 
 Following features are planned for the near future:
 
 - More data types (e.g FLOAT)
 - Further support for selection statements
-- Loops
+- Further support for loops
 - Procedures and Functions
 - Record Type
 - File I/O
@@ -183,6 +184,26 @@ ELSE
     OUTPUT "You cannot drive."
 ENDIF
 ```
+
+## Loops
+Currently, only a `FOR` loop is supported.
+
+### FOR loop
+A for loop is used to iterate through a specific range. The basic syntax is
+shown in example below:
+```
+FOR a <- 1 TO 5
+    OUTPUT a
+ENDFOR
+```
+Additionally, a `STEP` can be added to increment or decrement numbers. For example,
+to print the above set of numbers in reverse order:
+```
+FOR a <- 5 TO 1 STEP -1
+    OUTPUT a
+ENDFOR
+```
+`STEP` defaults to `1`.
 
 ## Contributing to PSPL
 PSPL is an experimental and fun side project so I doubt if I will ever be seriously 

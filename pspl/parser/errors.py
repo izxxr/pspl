@@ -30,6 +30,8 @@ if TYPE_CHECKING:
 __all__ = (
     'PSPLParserError',
     'IdentifierNotDefined',
+    'UnknownType',
+    'SyntaxError',
 )
 
 
@@ -75,3 +77,7 @@ class UnknownType(PSPLParserError):
     def __init__(self, source_pos: Optional[SourcePosition], tp: str) -> None:
         self.tp = tp
         super().__init__(source_pos, 'Type %r is invalid' % tp)
+
+
+class SyntaxError(PSPLParserError):
+    """Error indicating a syntax error."""

@@ -69,10 +69,7 @@ def prod_expr(state: RuntimeState, tokens: Any):
     if tok == 'LT_BOOLEAN_FALSE':
         return ast.Boolean(False)
     if tok == 'IDENT':
-        try:
-            return state.get_def(val)
-        except KeyError:
-            raise IdentifierNotDefined(tokens[0].getsourcepos(), val)
+        return ast.Ident(name=val, state=state, pos=tokens[0].getsourcepos())
 
     assert False
 
