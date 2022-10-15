@@ -20,6 +20,7 @@ of features:
 
 Following features are planned for the near future:
 
+- Formatting support `OUTPUT` keyword
 - More data types (e.g FLOAT)
 - Further support for selection statements
 - Procedures and Functions
