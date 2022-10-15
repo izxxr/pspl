@@ -7,7 +7,7 @@ simple pseudocode. While it currently does not support all the features of pseud
 CIE specification and misses many basic features, it currently supports the following set
 of features:
 
-- Identifiers (Variables)
+- Variables
 - Some primitive data types
     - STRING
     - INTEGER
@@ -15,11 +15,12 @@ of features:
 - Arithmetic Expressions
 - Boolean Expressions
 - Basic I/O operations
+- Basic conditionals
 
 Following features are planned for the near future:
 
 - More data types (e.g FLOAT)
-- Conditional and Selection statements
+- Further support for selection statements
 - Loops
 - Procedures and Functions
 - Record Type
@@ -163,6 +164,25 @@ INPUT a
 Upon running above program, input will be prompted until user gives a valid integer and
 `a` will be implicity converted to integer. For booleans, case insensitive `true` or `1`
 input accounts for `TRUE` and vice versa.
+
+## Conditionals
+`IF` is the only type of conditional statements currently supported. The clause must be
+terminated with an `ENDIF`.
+
+Note that `ELSE IF` is not supported yet. Instead, consider using `IF` inside an `ELSE`
+block.
+
+Example:
+```
+DECLARE age : INTEGER
+INPUT "Age: ", age
+
+IF age >= 18 THEN
+    OUTPUT "You can drive."
+ELSE
+    OUTPUT "You cannot drive."
+ENDIF
+```
 
 ## Contributing to PSPL
 PSPL is an experimental and fun side project so I doubt if I will ever be seriously 
