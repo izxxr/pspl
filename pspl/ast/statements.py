@@ -38,7 +38,7 @@ __all__ = (
     'Input',
     'If',
     'For',
-    'While',
+    'ConditionalLoop',
 )
 
 
@@ -211,13 +211,22 @@ class For(Statement):
             self._state.remove_def(ident)
 
 
-class While(Statement):
-    """Represents a while loop."""
-    def __init__(self, cond: Any, block: Block) -> None:
+class ConditionalLoop(Statement):
+    """Represents a conditional loop.
+
+    A conditional loop is either a while loop or repeat-until
+    loop. If `post_condition` is `True`, the loop is repeat-until
+    loop.
+    """
+    def __init__(self, cond: Any, block: Block, post_condition: bool) -> None:
         self.cond = cond
         self.block = block
+        self.post_condition = post_condition
 
     def eval(self) -> Any:
+        if self.post_condition:
+            self.block.eval()
+
         while True:
             cond = utils.maybe_eval(self.cond)
             if hasattr(cond, '__pspl_bool__'):

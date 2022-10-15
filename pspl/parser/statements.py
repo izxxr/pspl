@@ -117,7 +117,17 @@ def prod_for(state: RuntimeState, tokens: Any):
 
 @gen.production('stmt : ST_WHILE expr ST_DO stmt_list ST_ENDWHILE')
 def prod_while(state: RuntimeState, tokens: Any):
-    return ast.While(
+    return ast.ConditionalLoop(
         cond=tokens[1],
         block=tokens[3],
+        post_condition=False,
+    )
+
+
+@gen.production('stmt : ST_REPEAT stmt_list ST_UNTIL expr')
+def prod_repeat(state: RuntimeState, tokens: Any):
+    return ast.ConditionalLoop(
+        cond=tokens[3],
+        block=tokens[1],
+        post_condition=True,
     )

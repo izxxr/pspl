@@ -16,13 +16,12 @@ of features:
 - Boolean Expressions
 - Basic I/O operations
 - Simple conditional statements
-- For & While loops
+- Loops
 
 Following features are planned for the near future:
 
 - More data types (e.g FLOAT)
 - Further support for selection statements
-- Further support for loops
 - Procedures and Functions
 - Record Type
 - File I/O
@@ -186,7 +185,11 @@ ENDIF
 ```
 
 ## Loops
-Currently, available loops are FOR and WHILE loops.
+There are different types of loops:
+
+- FOR loop
+- DO-WHILE loop
+- REPEAT-UNTIL loop
 
 ### FOR loop
 A for loop is used to iterate through a specific range. The basic syntax is
@@ -207,18 +210,35 @@ ENDFOR
 ```
 `STEP` defaults to `1`.
 
-## WHILE loop
+### WHILE loop
 `WHILE` loop is used to run a block of code until a condition is `TRUE`.
 
 Example of taking inputs until user does not enter the number `123`:
 ```
 DECLARE number : INTEGER
-number = 0
+number <- 0
 
 WHILE number <> 123 DO
     INPUT number
 ENDWHILE
 ```
+
+### REPEAT-UNTIL loop
+A repeat until loop is similar to while loop except that the condition is written
+after the loop body and loop body is executed at least once even if the condition
+is not true.
+
+Example:
+```
+DECLARE number : INTEGER
+number <- 0
+
+REPEAT
+    INPUT number
+UNTIL number <> 123
+```
+In above example, even if we change second line to `number <- 123`, the loop body will
+still be executed once.
 
 ## Contributing to PSPL
 PSPL is an experimental and fun side project so I doubt if I will ever be seriously 

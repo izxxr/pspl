@@ -74,6 +74,8 @@ TOKENS: Dict[str, str] = {
     'ST_WHILE': r'WHILE',
     'ST_DO': r'DO',
     'ST_ENDWHILE': r'ENDWHILE',
+    'ST_REPEAT': r'REPEAT',
+    'ST_UNTIL': r'UNTIL',
 
     # Identifier
     'IDENT': r'[a-zA-Z_][a-zA-Z\d_]*',
