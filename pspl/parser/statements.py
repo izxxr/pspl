@@ -66,23 +66,7 @@ def prod_stmt_input(state: RuntimeState, tokens: Any):
         prompt = ''
         ident = maybe_ident.getstr()
 
-    try:
-        tp = state.get_type_def(ident)
-    except KeyError:
-        cast = lambda v: v
-    else:
-        cast = lexer.INPUT_TYPE_CASTS.get(tp, lambda v: v)
-
-    while True:
-        ipt = input(prompt)
-        try:
-            val = cast(ipt)
-        except Exception:
-            continue
-        else:
-            state.add_def(ident, val)
-            break
-    return ast.Input(prompt, ident)
+    return ast.Input(prompt, ident, state)
 
 @gen.production('stmt : IDENT OP_ASSIGN expr')
 @gen.production('assign : IDENT OP_ASSIGN expr')
@@ -96,7 +80,6 @@ def prod_assign(state: RuntimeState, tokens: Any):
     except KeyError:
         is_update = False
 
-    state.add_def(ident, val)
     return ast.Assignment(ident=ident, val=val, state=state, is_update=is_update)
 
 
@@ -129,4 +112,12 @@ def prod_for(state: RuntimeState, tokens: Any):
         block=block,
         keep_ident_after=not assign.is_update,
         state=state,
+    )
+
+
+@gen.production('stmt : ST_WHILE expr ST_DO stmt_list ST_ENDWHILE')
+def prod_while(state: RuntimeState, tokens: Any):
+    return ast.While(
+        cond=tokens[1],
+        block=tokens[3],
     )

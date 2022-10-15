@@ -16,7 +16,7 @@ of features:
 - Boolean Expressions
 - Basic I/O operations
 - Simple conditional statements
-- Basic for loop
+- For & While loops
 
 Following features are planned for the near future:
 
@@ -186,7 +186,7 @@ ENDIF
 ```
 
 ## Loops
-Currently, only a `FOR` loop is supported.
+Currently, available loops are FOR and WHILE loops.
 
 ### FOR loop
 A for loop is used to iterate through a specific range. The basic syntax is
@@ -206,6 +206,19 @@ FOR a <- 5 TO 1 STEP -1
 ENDFOR
 ```
 `STEP` defaults to `1`.
+
+## WHILE loop
+`WHILE` loop is used to run a block of code until a condition is `TRUE`.
+
+Example of taking inputs until user does not enter the number `123`:
+```
+DECLARE number : INTEGER
+number = 0
+
+WHILE number <> 123 DO
+    INPUT number
+ENDWHILE
+```
 
 ## Contributing to PSPL
 PSPL is an experimental and fun side project so I doubt if I will ever be seriously 

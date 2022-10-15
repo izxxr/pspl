@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Optional
 from pspl.ast.base import Node
-from pspl import utils
+from pspl import utils, lexer
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -38,6 +38,7 @@ __all__ = (
     'Input',
     'If',
     'For',
+    'While',
 )
 
 
@@ -105,7 +106,7 @@ class Assignment(Statement):
         self._state = state
 
     def eval(self) -> None:
-        pass
+        self._state.add_def(self.ident, utils.maybe_eval(self.val))
 
 
 class Input(Statement):
@@ -118,12 +119,28 @@ class Input(Statement):
     ident: :class:`Node`
         The identifier to store the input in.
     """
-    def __init__(self, prompt: str, ident: str) -> None:
+    def __init__(self, prompt: str, ident: str, state: RuntimeState) -> None:
         self.prompt = prompt
         self.ident = ident
+        self._state = state
 
     def eval(self) -> None:
-        pass
+        try:
+            tp = self._state.get_type_def(self.ident)
+        except KeyError:
+            cast = lambda v: v
+        else:
+            cast = lexer.INPUT_TYPE_CASTS.get(tp, lambda v: v)
+
+        while True:
+            ipt = input(self.prompt)
+            try:
+                val = cast(ipt)
+            except Exception:
+                continue
+            else:
+                self._state.add_def(self.ident, val)
+                break
 
 
 class If(Statement):
@@ -192,3 +209,20 @@ class For(Statement):
             self.block.eval()
         if self.keep_ident_after:
             self._state.remove_def(ident)
+
+
+class While(Statement):
+    """Represents a while loop."""
+    def __init__(self, cond: Any, block: Block) -> None:
+        self.cond = cond
+        self.block = block
+
+    def eval(self) -> Any:
+        while True:
+            cond = utils.maybe_eval(self.cond)
+            if hasattr(cond, '__pspl_bool__'):
+                cond = cond.__pspl_bool__()
+            if cond:
+                self.block.eval()
+            else:
+                break
