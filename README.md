@@ -196,6 +196,8 @@ FOR a <- 1 TO 5
     OUTPUT a
 ENDFOR
 ```
+Above code will print numbers from 1 to 5 inclusive.
+
 Additionally, a `STEP` can be added to increment or decrement numbers. For example,
 to print the above set of numbers in reverse order:
 ```
