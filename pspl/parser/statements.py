@@ -69,10 +69,18 @@ def prod_stmt_input(state: RuntimeState, tokens: Any):
     return ast.Input(prompt, ident, state)
 
 @gen.production('stmt : IDENT OP_ASSIGN expr')
+@gen.production('stmt : ST_CONSTANT IDENT OP_ASSIGN expr')
 @gen.production('assign : IDENT OP_ASSIGN expr')
+@gen.production('assign : ST_CONSTANT IDENT OP_ASSIGN expr')
 def prod_assign(state: RuntimeState, tokens: Any):
-    ident = tokens[0].getstr()
-    val = tokens[2]
+    if tokens[0].gettokentype() == 'ST_CONSTANT':
+        constant = True
+        ident = tokens[1].getstr()
+        val = tokens[3]
+    else:
+        constant = False
+        ident = tokens[0].getstr()
+        val = tokens[2]
 
     is_update = True
     try:
@@ -80,7 +88,14 @@ def prod_assign(state: RuntimeState, tokens: Any):
     except KeyError:
         is_update = False
 
-    return ast.Assignment(ident=ident, val=val, state=state, is_update=is_update)
+    return ast.Assignment(
+        ident=ident,
+        val=val,
+        state=state,
+        is_update=is_update,
+        constant=constant,
+        source_pos=tokens[0].getsourcepos(),
+    )
 
 
 @gen.production('stmt : ST_IF expr ST_THEN stmt_list ST_ENDIF')

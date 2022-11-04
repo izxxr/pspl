@@ -86,6 +86,21 @@ b <- 1
 c <- a + b
 ```
 
+### Constants
+Constants are identifiers that cannot be modified after initial definition. In order to define
+a constant, the `CONSTANT` keyword statement.
+```
+CONSTANT pi <- 3.14
+CONSTANT g <- 9.81
+```
+If we try to modify a constant identifier, an error is raised:
+```
+g <- 0
+
+At line 3, column 1, index 25:
+IdentifierAlreadyDefined: Identifier 'g' has already been defined as constant
+```
+
 ### Data Types and Declaration
 There are currently three primitive data types:
 

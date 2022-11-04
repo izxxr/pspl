@@ -62,6 +62,7 @@ TOKENS: Dict[str, str] = {
     # Statements
     'ST_OUTPUT': r'OUTPUT',
     'ST_DECLARE': r'DECLARE',
+    'ST_CONSTANT': r'CONSTANT',
     'ST_INPUT': r'INPUT',
     'ST_THEN': r'THEN',
     'ST_IF': r'IF',

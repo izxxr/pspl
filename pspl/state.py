@@ -23,7 +23,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, Optional
-from pspl.parser.errors import PSPLParserError
+from pspl.parser.errors import PSPLParserError, IdentifierAlreadyDefined
 from pspl.parser import generator
 from pspl import lexer
 
@@ -64,6 +64,7 @@ class RuntimeState:
         self.file = file
         self.type_defs: Dict[str, Any] = {}
         self.defs: Dict[str, Any] = {}
+        self.constant_defs: Dict[str, Any] = {}
 
     @property
     def filename(self) -> Optional[str]:
@@ -82,10 +83,24 @@ class RuntimeState:
     def remove_type_def(self, ident: str) -> Any:
         return self.type_defs.pop(ident)
 
-    def add_def(self, ident: str, val: Any) -> None:
-        self.defs[ident] = val
+    def add_def(
+        self,
+        ident: str,
+        val: Any,
+        *,
+        constant: bool = False,
+        source_pos: Optional[SourcePosition] = None,
+    ) -> None:
+        if ident in self.constant_defs:
+            raise IdentifierAlreadyDefined(source_pos, ident)
+        if constant:
+            self.constant_defs[ident] = val
+        else:
+            self.defs[ident] = val
 
     def get_def(self, ident: str) -> Any:
+        if ident in self.constant_defs:
+            return self.constant_defs[ident]
         return self.defs[ident]
 
     def remove_def(self, ident: str) -> Any:

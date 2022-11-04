@@ -79,5 +79,18 @@ class UnknownType(PSPLParserError):
         super().__init__(source_pos, 'Type %r is invalid' % tp)
 
 
+class IdentifierAlreadyDefined(PSPLParserError):
+    """Error indicating that an identifier has already been defined as a constant.
+
+    Attributes
+    ----------
+    ident: :class:`str`
+        The identifier attempted to be redefined.
+    """
+    def __init__(self, source_pos: Optional[SourcePosition], ident: str) -> None:
+        self.ident = ident
+        super().__init__(source_pos, "Identifier %r has already been defined as constant" % ident)
+
+
 class SyntaxError(PSPLParserError):
     """Error indicating a syntax error."""

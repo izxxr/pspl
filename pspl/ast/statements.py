@@ -29,6 +29,7 @@ from pspl import utils, lexer
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
     from pspl.ast.block import Block
+    from rply.token import SourcePosition
 
 __all__ = (
     'Statement',
@@ -99,14 +100,29 @@ class Assignment(Statement):
     val: :class:`str`
         The value assigned to identifier.
     """
-    def __init__(self, ident: str, val: Any, is_update: bool, state: RuntimeState) -> None:
+    def __init__(
+        self,
+        ident: str,
+        val: Any,
+        is_update: bool,
+        state: RuntimeState,
+        constant: bool,
+        source_pos: Optional[SourcePosition],
+    ) -> None:
         self.ident = ident
         self.val = val
         self.is_update = is_update
+        self.constant = constant
+        self.source_pos = source_pos
         self._state = state
 
     def eval(self) -> None:
-        self._state.add_def(self.ident, utils.maybe_eval(self.val))
+        self._state.add_def(
+            self.ident,
+            utils.maybe_eval(self.val),
+            constant=self.constant,
+            source_pos=self.source_pos,
+        )
 
 
 class Input(Statement):
