@@ -6,7 +6,7 @@ PSPL is a dynamically typed pseudocode inspired programming language built
 for educational and experimental purposes.
 
 For detailed information about PSPL and its usage, please refer to the
-project homepage at: https://github.com/nerdguyahmad/pspl
+project homepage at: https://github.com/izxxr/pspl
 
 Copyright (C) Izhar Ahmad 2022-2023 -- under the MIT license
 (See LICENSE for more details)
