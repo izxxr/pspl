@@ -39,7 +39,7 @@ or a higher version.
 Once cloned, simply use `python -m pspl <filename>` command in the cloned directory to
 execute the file.
 ```
-$ git clone https://github.com/nerdguyahmad/pspl.git
+$ git clone https://github.com/izxxr/pspl.git
 $ cd pspl
 $ python -m pspl test.pspl
 ```
