@@ -68,14 +68,16 @@ class Scope:
         source_pos: Optional[SourcePosition] = None,
         type_check: bool = True,
     ) -> None:
-        try:
-            tp = self.get_type_def(ident)
-        except KeyError:
-            # infer type
-            tp = lexer.STD_TYPES_MAP[type(val)]
-            self.add_type_def(ident, tp)
-        else:
-            utils.validate_type(val, tp, source_pos=source_pos)
+        
+        if type_check:
+            try:
+                tp = self.get_type_def(ident)
+            except KeyError:
+                # infer type
+                tp = lexer.STD_TYPES_MAP[type(val)]
+                self.add_type_def(ident, tp)
+            else:
+                utils.validate_type(val, tp, source_pos=source_pos)
 
         if ident in self.constant_defs:
             raise IdentifierAlreadyDefined(source_pos, ident)
