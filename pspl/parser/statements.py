@@ -69,9 +69,9 @@ def prod_stmt_input(state: RuntimeState, tokens: Any):
     return ast.Input(prompt, ident, state)
 
 @gen.production('stmt : IDENT OP_ASSIGN expr')
-@gen.production('stmt : ST_CONSTANT IDENT OP_ASSIGN expr')
+@gen.production('stmt : ST_CONSTANT IDENT OP_EQ expr')
 @gen.production('assign : IDENT OP_ASSIGN expr')
-@gen.production('assign : ST_CONSTANT IDENT OP_ASSIGN expr')
+@gen.production('assign : ST_CONSTANT IDENT OP_EQ expr')
 def prod_assign(state: RuntimeState, tokens: Any):
     if tokens[0].gettokentype() == 'ST_CONSTANT':
         constant = True
