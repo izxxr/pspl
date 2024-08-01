@@ -11,6 +11,7 @@ of features:
 - Some primitive data types
     - STRING
     - INTEGER
+    - FLOAT
     - BOOLEAN
 - Arithmetic Expressions
 - Boolean Expressions
@@ -21,7 +22,6 @@ of features:
 Following features are planned for the near future:
 
 - Formatting support `OUTPUT` keyword
-- More data types (e.g FLOAT)
 - Further support for selection statements
 - Procedures and Functions
 - Record Type
@@ -120,13 +120,16 @@ DECLARE a : INTEGER
 Note that attempting to use `a` will still result in an `IdentifierNotDefined`.
 
 ### Strings
-Strings are well... just, strings. In order to represent a string literal, the data
+Strings, `STRING`, are well... just, strings. In order to represent a string literal, the data
 must be wrapped in double or single quotes.
 
 Two strings can be concatenated to form a single string with data of both strings.
 
 ### Integers
-Integers are simple numbers that support arithmetic operations. Nothing special.
+Integers, `INTEGER`, are simple numbers that support arithmetic operations. Nothing special.
+
+## Floating Point Numbers
+Floating point numbers, `FLOAT`, are numbers with decimal point.
 
 #### Booleans
 There are two boolean literals, `TRUE` and `FALSE` of course. Boolean expressions
@@ -136,6 +139,7 @@ also return a boolean.
 Arithmetic expressions contain mathematical operations between integers.
 
 Following are available arithmetic operators:
+
 - `+`
 - `-`
 - `*`

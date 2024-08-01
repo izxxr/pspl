@@ -28,6 +28,7 @@ from pspl.ast.base import Node
 __all__ = (
     'String',
     'Integer',
+    'Float',
     'Boolean',
 )
 
@@ -60,6 +61,21 @@ class Integer(Node):
 
     def eval(self) -> int:
         return int(self.value)
+
+
+class Float(Node):
+    """Represents a floating point number literal.
+
+    Attributes
+    ----------
+    value: :class:`str`
+        The underlying floating point number literal.
+    """
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def eval(self) -> float:
+        return float(self.value)
 
 
 class Boolean(Node):

@@ -36,6 +36,7 @@ __all__ = (
 TOKENS: Dict[str, str] = {
     # Literals
     'LT_STRING': r'(".+")|(\'.+\')|(\'\')|("")',
+    'LT_FLOAT': r'[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)',
     'LT_INTEGER': r'\d+',
     'LT_BOOLEAN_TRUE': r'TRUE',
     'LT_BOOLEAN_FALSE': r'FALSE',
@@ -95,6 +96,7 @@ PRECEDENCE: Tuple[Tuple[str, List[str]], ...] = (
 BUILTIN_TYPES: Tuple[str, ...] = (
     'STRING',
     'INTEGER',
+    'FLOAT',
     'BOOLEAN',
 )
 
@@ -109,5 +111,6 @@ def _bool_type_cast(v: str) -> bool:
 INPUT_TYPE_CASTS: Dict[str, Callable[[str], Any]] = {
     'STRING': str,
     'INTEGER': int,
+    'FLOAT': float,
     'BOOLEAN': _bool_type_cast,
 }
