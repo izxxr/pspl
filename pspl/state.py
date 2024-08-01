@@ -22,9 +22,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Optional
-from pspl.parser.errors import PSPLParserError, IdentifierAlreadyDefined
+from typing import TYPE_CHECKING, Optional
+from pspl.parser.errors import PSPLParserError
 from pspl.parser import generator
+from pspl.scopes import Scope
 from pspl import lexer
 
 import rply
@@ -37,6 +38,22 @@ if TYPE_CHECKING:
 __all__ = (
     'RuntimeState',
 )
+
+
+class _LocalScopeManager:
+    def __init__(self, state: RuntimeState) -> None:
+        self._state = state
+        self._previous_scope: Optional[Scope] = None
+        self._scope: Scope = None  # type: ignore (late binding)
+
+    def __enter__(self) -> Scope:
+        self._previous_scope = self._state.local_scope
+        scope = self._state.global_scope.copy()
+        self._state.local_scope = scope
+        return scope
+
+    def __exit__(self, *_) -> None:
+        self._state.local_scope = self._previous_scope
 
 
 class RuntimeState:
@@ -62,9 +79,9 @@ class RuntimeState:
 
         self.source = source
         self.file = file
-        self.type_defs: Dict[str, Any] = {}
-        self.defs: Dict[str, Any] = {}
-        self.constant_defs: Dict[str, Any] = {}
+        self.global_scope = Scope()
+        self.local_scope: Optional[Scope] = None
+        self._current_scope = None
 
     @property
     def filename(self) -> Optional[str]:
@@ -74,37 +91,23 @@ class RuntimeState:
         """
         return self.source if self.file else None
 
-    def add_type_def(self, ident: str, tp: Any) -> None:
-        self.type_defs[ident] = tp
+    def get_current_scope(self) -> Scope:
+        if self.local_scope:
+            return self.local_scope
 
-    def get_type_def(self, ident: str) -> Any:
-        return self.type_defs[ident]
+        return self.global_scope
 
-    def remove_type_def(self, ident: str) -> Any:
-        return self.type_defs.pop(ident)
+    def create_local_scope(self) -> _LocalScopeManager:
+        """Creates a new local scope.
+        
+        This is a context manager interface for managing local
+        scope. Upon entering, creates a new local scope and preserves
+        previous scope state.
 
-    def add_def(
-        self,
-        ident: str,
-        val: Any,
-        *,
-        constant: bool = False,
-        source_pos: Optional[SourcePosition] = None,
-    ) -> None:
-        if ident in self.constant_defs:
-            raise IdentifierAlreadyDefined(source_pos, ident)
-        if constant:
-            self.constant_defs[ident] = val
-        else:
-            self.defs[ident] = val
-
-    def get_def(self, ident: str) -> Any:
-        if ident in self.constant_defs:
-            return self.constant_defs[ident]
-        return self.defs[ident]
-
-    def remove_def(self, ident: str) -> Any:
-        return self.defs.pop(ident)
+        This allows proper restoring of previous local scope upon
+        exiting from the created local scope.
+        """
+        return _LocalScopeManager(self)
 
     def _get_lexer(self) -> Lexer:
         lg = rply.LexerGenerator()

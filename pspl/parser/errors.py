@@ -31,7 +31,9 @@ __all__ = (
     'PSPLParserError',
     'IdentifierNotDefined',
     'UnknownType',
+    'TypeCheckError',
     'SyntaxError',
+    'ParamsError',
 )
 
 
@@ -79,6 +81,41 @@ class UnknownType(PSPLParserError):
         super().__init__(source_pos, 'Type %r is invalid' % tp)
 
 
+class TypeCheckError(PSPLParserError):
+    """Error indicating 
+
+    Attributes
+    ----------
+    given: :class:`str`
+        The given (invalid) type.
+    expected: :class:`str`
+        The expected (valid) type.
+    mod_name: Optional[:class:`str`]
+        If error originated from a module, its name.
+    param_name: Optional[:class:`str`]
+        If error originated from a module, parameter name that caused the error.
+    """
+    def __init__(
+            self,
+            given: str,
+            expected: str,
+            source_pos: Optional[SourcePosition],
+            mod_name: Optional[str] = None,
+            param_name: Optional[str] = None,
+    ) -> None:
+
+        self.given = given
+        self.expected = expected
+
+        if mod_name is None:
+            msg = f'Expected type {expected}; received {given} instead'
+        else:
+            # assume param_name always present if mod_name present
+            msg = f'In parameter {param_name} in {mod_name}, expected type {expected}; received {given} instead'
+
+        super().__init__(source_pos, msg)
+
+
 class IdentifierAlreadyDefined(PSPLParserError):
     """Error indicating that an identifier has already been defined as a constant.
 
@@ -94,3 +131,24 @@ class IdentifierAlreadyDefined(PSPLParserError):
 
 class SyntaxError(PSPLParserError):
     """Error indicating a syntax error."""
+
+
+class ParamsError(PSPLParserError):
+    """Error indicating invalid parameters passed to module.
+
+    Attributes
+    ----------
+    mod_name: :class:`str`
+        The name of module that raised the error.
+    given: :class:`int`
+        Number of arguments given.
+    required:
+        Number of arguments required.
+    """
+
+    def __init__(self, mod_name: str, given: int, required: int, source_pos: Optional[SourcePosition]) -> None:
+        self.mod_name = mod_name
+        self.given = given
+        self.required = required
+
+        super().__init__(source_pos, f"Module {mod_name} takes {required} parameters; {given} given.")

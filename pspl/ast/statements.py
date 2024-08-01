@@ -29,6 +29,7 @@ from pspl import utils, lexer
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
     from pspl.ast.block import Block
+    from pspl.ast.expressions import TypeDef
     from rply.token import SourcePosition
 
 __all__ = (
@@ -81,13 +82,11 @@ class Declare(Statement):
     tp: :class:`str`
         The type of identifier.
     """
-    def __init__(self, ident: str, tp: str, state: RuntimeState) -> None:
-        self.ident = ident
-        self.tp = tp
+    def __init__(self, typedef: TypeDef, state: RuntimeState) -> None:
+        self.ident = typedef.name
+        self.tp = typedef.type
+        self.typedef = typedef
         self._state = state
-
-    def eval(self) -> None:
-        pass
 
 
 class Assignment(Statement):
@@ -117,7 +116,8 @@ class Assignment(Statement):
         self._state = state
 
     def eval(self) -> None:
-        self._state.add_def(
+        scope = self._state.get_current_scope()
+        scope.add_def(
             self.ident,
             utils.maybe_eval(self.val),
             constant=self.constant,
@@ -141,8 +141,9 @@ class Input(Statement):
         self._state = state
 
     def eval(self) -> None:
+        scope = self._state.get_current_scope()
         try:
-            tp = self._state.get_type_def(self.ident)
+            tp = scope.get_type_def(self.ident)
         except KeyError:
             cast = lambda v: v
         else:
@@ -155,7 +156,7 @@ class Input(Statement):
             except Exception:
                 continue
             else:
-                self._state.add_def(self.ident, val)
+                scope.add_def(self.ident, val)
                 break
 
 
@@ -220,27 +221,30 @@ class For(Statement):
         start = utils.maybe_eval(self.start)
         end = utils.maybe_eval(self.end) + step
         ident = self.ident
+        scope = self._state.get_current_scope()
+
         for i in range(start, end, step):
-            self._state.add_def(self.ident, i)
+            scope.add_def(self.ident, i)
             self.block.eval()
+
         if self.keep_ident_after:
-            self._state.remove_def(ident)
+            scope.remove_def(ident)
 
 
 class ConditionalLoop(Statement):
     """Represents a conditional loop.
 
     A conditional loop is either a while loop or repeat-until
-    loop. If `post_condition` is `True`, the loop is repeat-until
+    loop. If `post` is `True`, the loop is repeat-until
     loop.
     """
-    def __init__(self, cond: Any, block: Block, post_condition: bool) -> None:
+    def __init__(self, cond: Any, block: Block, post: bool) -> None:
         self.cond = cond
         self.block = block
-        self.post_condition = post_condition
+        self.post = post
 
     def eval(self) -> Any:
-        if self.post_condition:
+        if self.post:
             self.block.eval()
 
         while True:

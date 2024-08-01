@@ -44,16 +44,13 @@ def prod_stmt_output(state: RuntimeState, tokens: Any):
     value = tokens[1]
     return ast.Output(value)
 
-@gen.production('stmt : ST_DECLARE IDENT SYM_COLON IDENT')
+@gen.production('stmt : ST_DECLARE typedef')
 def prod_stmt_declare(state: RuntimeState, tokens: Any):
-    ident = tokens[1].getstr()
-    tp = tokens[3].getstr()
+    typedef = tokens[1]
 
-    if not tp in lexer.BUILTIN_TYPES:
-        raise UnknownType(tokens[3].getsourcepos(), tp)
-
-    state.add_type_def(ident, tp)
-    return ast.Declare(ident, tp, state)
+    scope = state.get_current_scope()
+    scope.add_type_def(typedef.name, typedef.type)
+    return ast.Declare(typedef, state)
 
 @gen.production('stmt : ST_INPUT IDENT')
 @gen.production('stmt : ST_INPUT expr OP_SEP IDENT')
@@ -82,9 +79,10 @@ def prod_assign(state: RuntimeState, tokens: Any):
         ident = tokens[0].getstr()
         val = tokens[2]
 
+    scope = state.get_current_scope()
     is_update = True
     try:
-        state.get_def(ident)
+        scope.get_def(ident)
     except KeyError:
         is_update = False
 
@@ -135,7 +133,7 @@ def prod_while(state: RuntimeState, tokens: Any):
     return ast.ConditionalLoop(
         cond=tokens[1],
         block=tokens[3],
-        post_condition=False,
+        post=False,
     )
 
 
@@ -144,5 +142,5 @@ def prod_repeat(state: RuntimeState, tokens: Any):
     return ast.ConditionalLoop(
         cond=tokens[3],
         block=tokens[1],
-        post_condition=True,
+        post=True,
     )

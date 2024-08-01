@@ -24,8 +24,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, Type
 from pspl.parser import generator
-from pspl.parser.errors import IdentifierNotDefined
-from pspl import ast
+from pspl.parser.errors import UnknownType
+from pspl import ast, lexer
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -50,6 +50,15 @@ BOOLEAN_EXPRESSION_NODES: Dict[str, Type[ast.BooleanExpression]] = {
     'OP_LTEQ': ast.LtEq,
 }
 
+@gen.production('typedef : IDENT SYM_COLON IDENT')
+def prod_typedef(state: RuntimeState, tokens: Any):
+    ident = tokens[0].getstr()
+    tp = tokens[2].getstr()
+
+    if not tp in lexer.BUILTIN_TYPES:
+        raise UnknownType(tokens[3].getsourcepos(), tp)
+
+    return ast.TypeDef(ident, tp, tokens[0].getsourcepos())
 
 @gen.production('expr : LT_STRING')
 @gen.production('expr : LT_INTEGER')

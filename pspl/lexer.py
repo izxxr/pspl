@@ -30,13 +30,14 @@ __all__ = (
     'TOKENS',
     'IGNORED_TOKENS',
     'BUILTIN_TYPES',
+    'STD_TYPES_MAP',
     'INPUT_TYPE_CASTS',
 )
 
 TOKENS: Dict[str, str] = {
     # Literals
     'LT_STRING': r'(".+")|(\'.+\')|(\'\')|("")',
-    'LT_FLOAT': r'[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)',
+    'LT_FLOAT': r'[+-]?([0-9]+([.][0-9]*)|[.][0-9]+)',
     'LT_INTEGER': r'\d+',
     'LT_BOOLEAN_TRUE': r'TRUE',
     'LT_BOOLEAN_FALSE': r'FALSE',
@@ -78,6 +79,9 @@ TOKENS: Dict[str, str] = {
     'ST_ENDWHILE': r'ENDWHILE',
     'ST_REPEAT': r'REPEAT',
     'ST_UNTIL': r'UNTIL',
+    'ST_PROCEDURE': r'PROCEDURE',
+    'ST_ENDPROCEDURE': r'ENDPROCEDURE',
+    'ST_CALL': r'CALL',
 
     # Identifier
     'IDENT': r'[a-zA-Z_][a-zA-Z\d_]*',
@@ -93,12 +97,17 @@ PRECEDENCE: Tuple[Tuple[str, List[str]], ...] = (
     ('left', ['OP_GTEQ', 'OP_LTEQ']),
 )
 
-BUILTIN_TYPES: Tuple[str, ...] = (
-    'STRING',
-    'INTEGER',
-    'FLOAT',
-    'BOOLEAN',
-)
+BUILTIN_TYPES: Dict[str, type] = {
+    'STRING': str,
+    'INTEGER': int,
+    'FLOAT': float,
+    'BOOLEAN': bool,
+}
+
+STD_TYPES_MAP: Dict[type, str] = {
+    std_tp: pspl_tp
+    for pspl_tp, std_tp in BUILTIN_TYPES.items()
+}
 
 def _bool_type_cast(v: str) -> bool:
     v = v.lower()

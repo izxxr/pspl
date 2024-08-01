@@ -22,11 +22,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 from pspl.ast.literals import Boolean
 from pspl.ast.base import Node
-from pspl.parser.errors import IdentifierNotDefined
-from pspl import utils
+from pspl.parser.errors import IdentifierNotDefined, TypeCheckError
+from pspl import utils, lexer
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
@@ -34,6 +34,7 @@ if TYPE_CHECKING:
 
 __all__ = (
     'Ident',
+    'TypeDef',
     'ArithmeticExpression',
     'Add',
     'Subtract',
@@ -57,10 +58,31 @@ class Ident(Node):
         self._state = state
 
     def eval(self) -> Any:
+        scope = self._state.get_current_scope()
         try:
-            return self._state.get_def(self.name)
+            return scope.get_def(self.name)
         except KeyError:
             raise IdentifierNotDefined(self.pos, self.name)
+
+
+class TypeDef(Node):
+    """Type definition expression."""
+    def __init__(self, name: str, type: str, source_pos: SourcePosition) -> None:
+        self.name = name
+        self.type = type
+        self.source_pos = source_pos
+
+    def validate(self, value: Any, mod_name: Optional[str] = None, param_name: Optional[str] = None) -> None:
+        tp = lexer.BUILTIN_TYPES[self.type]
+
+        if not isinstance(value, tp):
+            raise TypeCheckError(
+                lexer.STD_TYPES_MAP[type(value)],
+                self.type,
+                self.source_pos,
+                mod_name=mod_name,
+                param_name=param_name
+            )
 
 
 class ArithmeticExpression(Node):
