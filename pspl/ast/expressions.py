@@ -73,16 +73,13 @@ class TypeDef(Node):
         self.source_pos = source_pos
 
     def validate(self, value: Any, mod_name: Optional[str] = None, param_name: Optional[str] = None) -> None:
-        tp = lexer.BUILTIN_TYPES[self.type]
-
-        if not isinstance(value, tp):
-            raise TypeCheckError(
-                lexer.STD_TYPES_MAP[type(value)],
-                self.type,
-                self.source_pos,
-                mod_name=mod_name,
-                param_name=param_name
-            )
+        utils.validate_type(
+            value,
+            self.type,
+            mod_name=mod_name,
+            param_name=param_name,
+            source_pos=self.source_pos,
+        )
 
 
 class ArithmeticExpression(Node):

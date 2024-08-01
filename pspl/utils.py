@@ -24,7 +24,12 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional, TYPE_CHECKING
+from pspl.parser.errors import TypeCheckError
+from pspl import lexer
+
+if TYPE_CHECKING:
+    from rply.token import SourcePosition
 
 __all__ = (
     'MISSING',
@@ -52,3 +57,22 @@ def maybe_eval(val: Any) -> Any:
     if hasattr(val, 'eval'):
         return val.eval()
     return val
+
+
+def validate_type(
+        value: Any,
+        tp: str,
+        mod_name: Optional[str] = None,
+        param_name: Optional[str] = None,
+        source_pos: Optional[SourcePosition] = None,
+) -> None:
+    expected = lexer.BUILTIN_TYPES[tp]
+
+    if not isinstance(value, expected):
+        raise TypeCheckError(
+            lexer.STD_TYPES_MAP[type(value)],
+            tp,
+            source_pos=source_pos,
+            mod_name=mod_name,
+            param_name=param_name
+        )

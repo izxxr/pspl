@@ -156,7 +156,7 @@ class Input(Statement):
             except Exception:
                 continue
             else:
-                scope.add_def(self.ident, val)
+                scope.add_def(self.ident, val, type_check=False)
                 break
 
 
@@ -224,7 +224,7 @@ class For(Statement):
         scope = self._state.get_current_scope()
 
         for i in range(start, end, step):
-            scope.add_def(self.ident, i)
+            scope.add_def(self.ident, i, type_check=False)
             self.block.eval()
 
         if self.keep_ident_after:

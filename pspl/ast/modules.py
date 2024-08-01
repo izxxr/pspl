@@ -105,7 +105,7 @@ class Procedure(Module):
         self.block = block
         self.state = state
         self.params = params
-        self.state.get_current_scope().add_def(name, self)
+        self.state.get_current_scope().add_def(name, self, type_check=False)
 
     def eval(self) -> None:
         return
@@ -143,6 +143,6 @@ class Call(Statement):
                 value = maybe_eval(call_param.value)
                 name = proc_param.name
                 proc_param.typedef.validate(value, mod_name=procedure.name, param_name=name)
-                lscope.add_def(name, value)
+                lscope.add_def(name, value, type_check=False)
 
             procedure.block.eval()
