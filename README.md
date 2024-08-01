@@ -4,7 +4,7 @@
 ## Overview
 The syntax of this language is heavily inspired from (or should I say, exactly identical to) the
 [CAIE A Level Computer Science (9618) Pseudocode](https://pdfcoffee.com/9618-pseudocode-guide-for-teachers-for-examination-from-2021-pdf-free.html).
-This makes this project a use case for students who are studying Computer Science in A Level and educators who are teaching the syllabus. (see [Background](#background) for more information)
+This makes this project a use case for students who are studying Computer Science in A Level and educators who are teaching the syllabus.
 
 The features that have been implemented are:
 
@@ -310,14 +310,6 @@ Howdy World
 Howdy World
 Howdy World
 ```
-
-## Background
-This project started in 2022 when I had the curiousity of creating a programming language in Python. As I was in my A Level at that time, I
-chose the pseudocode used in Paper 2 component of 9618 A Level Computer Science syllabus as sole syntax inspiration for this language.
-
-Initially, this was merely a side project that did not serve any real purpose to me. In 2024, when I started college, I started teaching A Level
-Computer Science as a side hobby and this was when I realized the usefulness of this project. I revived this project to add support
-for more features of the CAIE styled pseudocode and soon enough, I started using this language for teaching purposes.
 
 ## Contributing to PSPL
 Pull requests and issues are welcome. Please ensure that you follow the general guidelines:
