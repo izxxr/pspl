@@ -33,10 +33,20 @@ __all__ = ()
 
 gen = generator.get()
 
+def _flatten_tokens(tokens: Any):
+    flattened = []
+    for token in tokens:
+        if isinstance(token, ast.Block):
+            flattened.extend(_flatten_tokens(token.statements))
+        else:
+            flattened.append(token)
+
+    return flattened
+
 @gen.production('stmt_list : stmt')
 @gen.production('stmt_list : stmt_list stmt')
 def prod_stmt_list(state: RuntimeState, tokens: Any):
-    return ast.Block(tokens)
+    return ast.Block(_flatten_tokens(tokens))
 
 @gen.production('stmt : ST_OUTPUT expr')
 def prod_stmt_output(state: RuntimeState, tokens: Any):
