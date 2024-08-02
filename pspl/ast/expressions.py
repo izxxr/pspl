@@ -25,8 +25,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Optional, Union
 from pspl.ast.literals import Boolean
 from pspl.ast.base import Node
-from pspl.parser.errors import IdentifierNotDefined, TypeCheckError
-from pspl import utils, lexer
+from pspl.parser.errors import IdentifierNotDefined
+from pspl import utils
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState

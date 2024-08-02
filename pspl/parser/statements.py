@@ -23,9 +23,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
-from pspl.parser.errors import UnknownType, SyntaxError as PSPLSyntaxError
 from pspl.parser import generator
-from pspl import ast, lexer
+from pspl import ast
 
 if TYPE_CHECKING:
     from pspl.state import RuntimeState
