@@ -47,6 +47,9 @@ __all__ = (
     'GtEq',
     'Lt',
     'LtEq',
+    'And',
+    'Or',
+    'Not',
 )
 
 
@@ -167,3 +170,21 @@ class LtEq(BooleanExpression):
     """Represents an less than or equality boolean expression."""
     def eval(self) -> Boolean:
         return Boolean(utils.maybe_eval(self.left) <= utils.maybe_eval(self.right))
+
+
+class And(BooleanExpression):
+    """Represents AND boolean operator."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) and utils.maybe_eval(self.right))
+
+
+class Or(BooleanExpression):
+    """Represents OR boolean operator."""
+    def eval(self) -> Boolean:
+        return Boolean(utils.maybe_eval(self.left) or utils.maybe_eval(self.right))
+
+
+class Not(BooleanExpression):
+    """Represents NOT boolean operator."""
+    def eval(self) -> Boolean:
+        return Boolean(not utils.maybe_eval(self.right))

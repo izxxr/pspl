@@ -53,9 +53,13 @@ MISSING: Any = _Missing()
 """A type safe sentinel used where None may be ambiguous."""
 
 
-def maybe_eval(val: Any) -> Any:
+def maybe_eval(val: Any, recursive: bool = True) -> Any:
     if hasattr(val, 'eval'):
-        return val.eval()
+        val = val.eval()
+        
+        if recursive:
+            return maybe_eval(val)
+
     return val
 
 

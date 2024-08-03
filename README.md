@@ -13,6 +13,7 @@ The features that have been implemented are:
 - [x] Type Checking (at runtime)
 - [x] I/O Operations (OUTPUT, INPUT)
 - [x] Arithmetic Operations
+- [x] Boolean Operations (including AND, OR, NOT)
 - [x] Conditional Statements (IF, ELSE)
 - [x] Loops (FOR, WHILE, REPEAT-UNTIL)
 - [x] Modules (Functions and Procedures)
@@ -159,20 +160,24 @@ B <- (4 + 2) / (3 * 2)
 ### Logical Expressions
 Logical expressions return `TRUE` or `FALSE` as result.
 
-Following are available boolean operators:'
+Following are available boolean operators:
 
 - `=` (Equal To)
 - `<>` (Not Equal To)
 - `>` & `>=`
 - `<` & `<=`
+- `AND`
+- `OR`
+- `NOT`
 
 Example:
 ```
 A <- 5
 OUTPUT A > 1
+OUTPUT A > 2 AND A < 10
 ```
 
-Outputs `TRUE`
+Outputs `TRUE` and `TRUE`
 
 ### I/O operations
 `OUTPUT` statement is used for printing an expression to the console. e.g `OUTPUT "Hello World"`

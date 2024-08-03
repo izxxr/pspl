@@ -48,6 +48,9 @@ BOOLEAN_EXPRESSION_NODES: Dict[str, Type[ast.BooleanExpression]] = {
     'OP_LT': ast.Lt,
     'OP_GTEQ': ast.GtEq,
     'OP_LTEQ': ast.LtEq,
+    'OP_AND': ast.And,
+    'OP_OR': ast.Or,
+    'OP_NOT': ast.Not,
 }
 
 @gen.production('typedef : IDENT SYM_COLON IDENT')
@@ -113,7 +116,13 @@ def prod_expr_am_operations(state: RuntimeState, tokens: Any):
 @gen.production('expr : expr OP_LT expr')
 @gen.production('expr : expr OP_GTEQ expr')
 @gen.production('expr : expr OP_LTEQ expr')
+@gen.production('expr : expr OP_AND expr')
+@gen.production('expr : expr OP_OR expr')
 def prod_expr_bool(state: RuntimeState, tokens: Any):
     op = tokens[1].gettokentype()
     left, right = tokens[0], tokens[2]
     return BOOLEAN_EXPRESSION_NODES[op](left, right)
+
+@gen.production('expr : OP_NOT expr')
+def prod_expr_bool_not(state: RuntimeState, tokens: Any):
+    return ast.Not(None, tokens[1])
