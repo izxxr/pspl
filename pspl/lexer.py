@@ -49,12 +49,12 @@ TOKENS: Dict[str, str] = {
     'OP_MINUS': r'-',
     'OP_DIV': r'/',
     'OP_MUL': r'\*',
-    'OP_EQ': r'=',
+    'OP_GTEQ': r'>=',
+    'OP_LTEQ': r'<=',
     'OP_NEQ': r'<>',
     'OP_GT': r'>',
     'OP_LT': r'<',
-    'OP_GTEQ': r'>=',
-    'OP_LTEQ': r'<=',
+    'OP_EQ': r'=',
 
     # Symbols
     'SYM_COLON': r':',
