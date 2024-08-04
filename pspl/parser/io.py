@@ -22,32 +22,18 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from pspl.ast.node import Node
+from typing import TYPE_CHECKING, Any
+from pspl.parser import generator
+from pspl.ast.io import Output
 
 if TYPE_CHECKING:
-    from pspl.ast.statement import Statement
     from pspl.state import State
 
-__all__ = (
-    'Block',
-)
+__all__ = ()
+
+gen = generator.get()
 
 
-class Block(Node):
-    """Represents a code block with a list of statements."""
-
-    def __init__(self, statements: list[Statement], state: State) -> None:
-        self.statements: list[Statement] = []
-
-        for statement in statements:
-            if isinstance(statement, Block):
-                statements.extend(statement.statements)
-            elif isinstance(statement, Statement):
-                statements.append(statement)
-
-        super().__init__(state=state, source_pos=statements[0].source_pos)
-
-    def eval(self) -> None:
-        for statement in self.statements:
-            statement.eval()
+@gen.production('stmt : ST_OUTPUT expr')
+def prod_output(state: State, tokens: Any):
+    return Output(tokens[1], state=state, source_pos=tokens[0].getsourcepos())

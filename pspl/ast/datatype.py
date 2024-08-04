@@ -22,32 +22,18 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Any
 from pspl.ast.node import Node
 
-if TYPE_CHECKING:
-    from pspl.ast.statement import Statement
-    from pspl.state import State
-
 __all__ = (
-    'Block',
+    'DataType',
 )
 
 
-class Block(Node):
-    """Represents a code block with a list of statements."""
+class DataType(Node):
+    """Base class for all PSPL data types."""
 
-    def __init__(self, statements: list[Statement], state: State) -> None:
-        self.statements: list[Statement] = []
+    DATATYPE_NAME: str
 
-        for statement in statements:
-            if isinstance(statement, Block):
-                statements.extend(statement.statements)
-            elif isinstance(statement, Statement):
-                statements.append(statement)
-
-        super().__init__(state=state, source_pos=statements[0].source_pos)
-
-    def eval(self) -> None:
-        for statement in self.statements:
-            statement.eval()
+    def __pspl_output__(self) -> Any:
+        return f'TYPE({self.DATATYPE_NAME})'

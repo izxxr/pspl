@@ -1,20 +1,33 @@
 """
-PSPL - Pseudocode Styled Programming Language
+Pseudocode Styled Programming Language (PSPL)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PSPL is a dynamically typed pseudocode inspired programming language built
-for educational and experimental purposes.
-
-For detailed information about PSPL and its usage, please refer to the
-project homepage at: https://github.com/izxxr/pspl
-
-Copyright (C) Izhar Ahmad 2022-2023 -- under the MIT license
-(See LICENSE for more details)
+An experimental programming language based on the CAIE A-level Computer Science (9618)
+pseudocode syntax.
 """
 
-__author__ = 'Izhar Ahmad <nerdguyahmad.contact@gmail.com>'
-__notice__ = 'Copyright (C) Izhar Ahmad 2022-2023'
-__version__ = '0.1.0-alpha1'
-__license__ = 'MIT'
+__author__ = "Izhar Ahmad"
+__version__ = "0.1.0"
 
-from pspl.runner import *
+from pspl.state import State as _State
+
+__all__ = (
+    'execute',
+)
+
+
+def execute(src: str, *, strict: bool = False) -> int:
+    """Executes a source code.
+
+    Returns 0 or -1 to indicate successful execution or unsuccessful
+    execution respectively.
+
+    Parameters
+    ----------
+    src: :class:`str`
+        The source code to execute.
+    strict: :class:`bool`
+        Whether to execute with strict mode enabled.
+    """
+    state = _State(src, strict=strict)
+    return state.run()

@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2022 I. Ahmad
+# Copyright (c) 2022-2024 I. Ahmad
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,32 +22,16 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-from rply.token import Token
-from pspl.parser.errors import PSPLParserError
-from pspl.parser import generator
-from pspl import ast
+from pspl.ast.node import Node
 
-if TYPE_CHECKING:
-    from pspl.state import RuntimeState
+__all__ = (
+    'Statement',
+)
 
-__all__ = ()
 
-gen = generator.get()
+class Statement(Node):
+    """Base class for statements.
 
-@gen.production('program : stmt_list')
-def prod_program(state: RuntimeState, tokens: Any):
-    return ast.Block(tokens)
-
-@gen.error
-def generator_error_handler(state: RuntimeState, token: Token):
-    tp = token.gettokentype()
-    inner = token.getstr()
-    pos = token.getsourcepos()
-    
-    if tp == '$end':
-        msg = 'Unexpected end of program'
-    else:
-        msg = f'Unexpected token {inner} ({tp})'
-
-    raise PSPLParserError(source_pos=pos, message=msg)
+    A statement is a command that performs a specific operation such as
+    printing an output or taking inputs etc.
+    """

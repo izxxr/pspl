@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2022 I. Ahmad
+# Copyright (c) 2022-2024 I. Ahmad
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,24 @@
 
 from __future__ import annotations
 
-from typing import Any
-from rply.token import BaseBox
+from pytest import CaptureFixture
+from pspl import execute
+
 
 __all__ = (
-    "Node",
+    'check_stdout',
 )
 
+def check_stdout(
+        src: str,
+        out: str,
+        capsys: CaptureFixture,
+        strict: bool = False,
+        check_newline: bool = True,
+):
+    if check_newline:
+        out += '\n'
 
-class Node(BaseBox):
-    """Base class for all AST components.
-
-    All subclasses of this class should implement the :meth:`.eval`
-    method. By default, this method does nothing.
-    """
-    def eval(self) -> Any:
-        pass
+    execute(src, strict=strict)
+    cap = capsys.readouterr()
+    assert cap.out == out

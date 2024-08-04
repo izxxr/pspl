@@ -22,32 +22,15 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from pspl.ast.node import Node
+from tests._commons import check_stdout
 
-if TYPE_CHECKING:
-    from pspl.ast.statement import Statement
-    from pspl.state import State
+import pytest
 
-__all__ = (
-    'Block',
+
+@pytest.mark.parametrize(
+    ('value', 'output'),
+    (('"Hello World"', "Hello World"),
+     ('""', "")),
 )
-
-
-class Block(Node):
-    """Represents a code block with a list of statements."""
-
-    def __init__(self, statements: list[Statement], state: State) -> None:
-        self.statements: list[Statement] = []
-
-        for statement in statements:
-            if isinstance(statement, Block):
-                statements.extend(statement.statements)
-            elif isinstance(statement, Statement):
-                statements.append(statement)
-
-        super().__init__(state=state, source_pos=statements[0].source_pos)
-
-    def eval(self) -> None:
-        for statement in self.statements:
-            statement.eval()
+def test_output_literals(value: str, output: str | None, capsys: pytest.CaptureFixture) -> None:
+    check_stdout(f'OUTPUT {value}', value if output is None else output, capsys)

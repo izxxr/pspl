@@ -130,3 +130,5 @@ dmypy.json
 
 # Test
 test.*
+
+_legacy_pspl/

@@ -2,10 +2,9 @@
 pspl.parser
 ~~~~~~~~~~~
 
-Implementation of PSPL language parser.
+Implementation of PSPL parser.
 """
-from .program import *
-from .expressions import *
-from .statements import *
-from .modules import *
-from .generator import *
+
+from .io import *
+from .datatypes import *
+from .block import *

@@ -2,11 +2,5 @@
 pspl.ast
 ~~~~~~~~
 
-Abstract Syntax Tree components for PSPL.
+The abstract syntax tree (AST) nodes for PSPL.
 """
-from .base import *
-from .literals import *
-from .block import *
-from .statements import *
-from .expressions import *
-from .modules import *

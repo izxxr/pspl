@@ -23,31 +23,30 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from pspl.ast.node import Node
+from pspl.ast.statement import Statement
 
 if TYPE_CHECKING:
-    from pspl.ast.statement import Statement
+    from pspl.ast.datatype import DataType
     from pspl.state import State
+    from rply.token import SourcePosition
 
 __all__ = (
-    'Block',
+    'Output',
 )
 
 
-class Block(Node):
-    """Represents a code block with a list of statements."""
+class Output(Statement):
+    """Represents an output statement."""
 
-    def __init__(self, statements: list[Statement], state: State) -> None:
-        self.statements: list[Statement] = []
+    def __init__(self, value: DataType, state: State, source_pos: SourcePosition) -> None:
+        self.value = value
 
-        for statement in statements:
-            if isinstance(statement, Block):
-                statements.extend(statement.statements)
-            elif isinstance(statement, Statement):
-                statements.append(statement)
+        super().__init__(state=state, source_pos=source_pos)
 
-        super().__init__(state=state, source_pos=statements[0].source_pos)
-
-    def eval(self) -> None:
-        for statement in self.statements:
-            statement.eval()
+    def eval(self):
+        try:
+            value = self.value.__pspl_output__()
+        except AttributeError:
+            print(self.value)
+        else:
+            print(value)

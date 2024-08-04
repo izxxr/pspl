@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2022 I. Ahmad
+# Copyright (c) 2022-2024 I. Ahmad
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -21,24 +21,29 @@
 # SOFTWARE.
 
 from __future__ import annotations
-from typing import Optional
 
-import pspl
+from pspl.state import State
+from pspl import __version__
+
 import click
 
-@click.command()
-@click.option('--version', help='Show PSPL version', flag_value='version', default=False)
-@click.argument('filename', type=str)
-def main(version: bool, filename: str):
-    """Command line interface for PSPL"""
-    if version:
-        return print(pspl.__version__)
 
-    runner = pspl.PSPLRunner(filename, file=True)
+@click.command()
+@click.option('--version', help='Show PSPL version', is_flag=True, default=False)
+@click.option('--strict', help='Execute with strict mode enabled', is_flag=True, default=False)
+@click.argument('filename', type=str)
+def main(version: bool, strict: bool, filename: str):
+    """Command line interface for PSPL."""
+    if version:
+        return print(__version__)
+
     try:
-        runner.run()
+        state = State.from_file(filename, strict=strict)
     except FileNotFoundError:
-        print('error: file of that name does not exist')
+        print(f'error: file {filename!r} does not exist')
+    else:
+        state.run()
+
 
 if __name__ == '__main__':
     main()

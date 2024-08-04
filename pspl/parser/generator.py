@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2022 I. Ahmad
+# Copyright (c) 2022-2024 I. Ahmad
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,28 @@
 
 from __future__ import annotations
 
-from typing import Optional
 from pspl import lexer
-
-import rply
+from rply import ParserGenerator
 
 __all__ = (
     "get",
     "reset",
 )
 
-_gen: Optional[rply.ParserGenerator] = None
+_gen: ParserGenerator | None = None
 
 
-def get() -> rply.ParserGenerator:
+def get() -> ParserGenerator:
     """Returns the :class:`rply.ParserGenerator` object.
 
-    This function caches the generator instance and returns
-    it on subsequent calls.
+    This function caches the generator instance on first call and
+    returns the cached value on subsequent calls.
     """
     global _gen
     if _gen:
         return _gen
-    _gen = rply.ParserGenerator(lexer.TOKENS, precedence=lexer.PRECEDENCE)
+
+    _gen = ParserGenerator(lexer.TOKENS, precedence=lexer.PRECEDENCE)
     return _gen
 
 

@@ -22,32 +22,47 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-from pspl.ast.node import Node
+from typing import Generic, TypeVar, TYPE_CHECKING
+from pspl.ast.datatype import DataType
 
 if TYPE_CHECKING:
-    from pspl.ast.statement import Statement
     from pspl.state import State
+    from rply.token import SourcePosition
 
 __all__ = (
-    'Block',
+    'DataType',
+    'String',
 )
 
 
-class Block(Node):
-    """Represents a code block with a list of statements."""
+_DT = TypeVar('_DT')
 
-    def __init__(self, statements: list[Statement], state: State) -> None:
-        self.statements: list[Statement] = []
 
-        for statement in statements:
-            if isinstance(statement, Block):
-                statements.extend(statement.statements)
-            elif isinstance(statement, Statement):
-                statements.append(statement)
+class Primitive(DataType, Generic[_DT]):
+    """Base class for primitive data types.
 
-        super().__init__(state=state, source_pos=statements[0].source_pos)
+    Subclasses of this class on their own represent a primitive
+    data type but their instances represent a literal for that
+    data type.
+    """
 
-    def eval(self) -> None:
-        for statement in self.statements:
-            statement.eval()
+    STD_DATATYPE: type[_DT]
+
+    def __init__(self, value: _DT, state: State, source_pos: SourcePosition) -> None:
+        self.value = value
+        super().__init__(state=state, source_pos=source_pos)
+
+    def __pspl_output__(self):
+        return self.value
+
+
+class String(Primitive[str]):
+    """Represents the string data type or literal."""
+
+    DATATYPE_NAME = 'STRING'
+    STD_DATATYPE = str
+
+
+PRIMITIVE_DATATYPES = {
+    'STRING': String,
+}
