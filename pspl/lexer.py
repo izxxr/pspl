@@ -36,3 +36,4 @@ TOKENS: dict[str, str] = {
 }
 
 IGNORED_TOKENS: tuple[str, ...] = (r'\t', r'\s+')
+PRECEDENCE: tuple[tuple[str, tuple[str, ...]], ...] = ()
